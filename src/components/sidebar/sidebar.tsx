@@ -31,7 +31,7 @@ const Sidebar = () => {
             <nav className="mt-6 p-2">
               <ul>
                 <li className="my-6">
-                  <Link href="/inicio">
+                  <Link href="/">
                     <p className="hover:text-gray-300">Inicio</p>
                   </Link>
                 </li>

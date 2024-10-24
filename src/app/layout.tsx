@@ -17,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`flex font-segoe-ui antialiased ${inter.className}`}>
+      <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
         <Sidebar />
-        <main className="flex-1 p-4">
+        <main className="flex-1 p-6 m-6">
 
           {children}
 
