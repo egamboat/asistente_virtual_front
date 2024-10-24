@@ -6,7 +6,7 @@ const Home = () => {
 
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-between">
+    <div className="h-full bg-white flex flex-col justify-between">
       <div className="flex justify-between w-full">
         <div className="ml-4">
           <h1 className="text-3xl font-bold">
@@ -26,7 +26,8 @@ const Home = () => {
 
       {/* Botón de micrófono */}
       <div className="flex justify-center items-center">
-        <button className="bg-gray-300 p-6 rounded-lg shadow-lg mb-32">
+        <button className="bg-gray-300 p-6 rounded-lg shadow-lg ">
+          {/* <img src="/public/media/imagens/mic.png" alt=""  className="w-8 h-8"  /> */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"

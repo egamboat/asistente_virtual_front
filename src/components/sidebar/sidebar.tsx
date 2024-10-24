@@ -11,7 +11,7 @@ const Sidebar = () => {
 
   return (
     <div className={`flex`}>
-      <div className={`bg-[#234AB7] text-white h-screen p-6 transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"}`} >
+      <div className={`bg-[#234AB7] text-white h-full p-6 transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"}`} >
         <button
           className=""
           onClick={toggleSidebar}
