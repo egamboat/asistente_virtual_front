@@ -6,7 +6,9 @@ import { EventApi } from '@fullcalendar/core';
 import { FC } from "react";
 
 const events = [
-    { title: 'Meeting', start: new Date() }
+    { title: 'Meeting', start: new Date() },
+    { title: 'Sprint Planning', start: '2024-11-01T14:00:00' },
+    { title: 'Demo Presentation', start: '2024-11-03T16:00:00' },
 ];
 
 const Calendario: FC = () => {
@@ -14,14 +16,14 @@ const Calendario: FC = () => {
         return (
             <>
                 <b>{eventInfo.timeText}</b>
-                <i>{eventInfo.event.title}</i>
+                <i className="break-words">{eventInfo.event.title}</i>
             </>
         );
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col justify-between">
-            <div className="flex justify-between w-full my-4">
+        <div className="h-full bg-white flex flex-col justify-between">
+            <div className="flex justify-between w-full mt-4">
                 <div className="ml-4">
                     <h1 className="text-3xl font-bold">
                         Calendario
@@ -36,14 +38,13 @@ const Calendario: FC = () => {
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
-                        weekends={false}
+                        weekends={true}
                         events={events}
-                        locale="es"
+                        // locale="Es"
                         eventContent={renderEventContent}
                         buttonText={{
                             today: 'Hoy',
                         }}
-                        
                     />
                 </div>
             </div>
