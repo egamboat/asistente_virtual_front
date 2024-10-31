@@ -37,7 +37,7 @@ const Agenda: React.FC<EventsTableProps> = ({ events: any }) => {
 
 
             <div className="overflow-x-auto p-4  mt-32">
-                <table className="min-w-full bg-[#D9D9D9] rounded-2xl">
+                <table className="min-w-full bg-[#D9D9D9]">
                     <thead className="">
                         <tr className="">
                             <th className="p-3 text-left font-semibold border-b">Evento</th>
