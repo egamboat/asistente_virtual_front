@@ -58,3 +58,7 @@ body {
   height: 100%;
   position: relative;
 }
+
+.fc-toolbar-title {
+  text-transform: capitalize;
+}

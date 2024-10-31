@@ -3,20 +3,27 @@ import Reloj from "@/components/reloj/reloj";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { EventApi } from '@fullcalendar/core';
+import esLocale from "@fullcalendar/core/locales/es";
 import { FC } from "react";
+import { DataEvento } from "@/app/data";
+import { Evento } from "@/interfaces/interfaceEventos";
 
-const events = [
-    { title: 'Meeting', start: new Date() },
-    { title: 'Sprint Planning', start: '2024-11-01T14:00:00' },
-    { title: 'Demo Presentation', start: '2024-11-03T16:00:00' },
-];
+const transformEvents = (event: Evento[]) => {
+    return event.map(event => ({
+        title: event.titulo,
+        start: event.fechaInicio,
+        end: event.fechaFin,
+    }));
+};
 
 const Calendario: FC = () => {
+    const events = transformEvents(DataEvento);
+
     const renderEventContent = (eventInfo: { timeText: string; event: EventApi }) => {
         return (
             <>
                 <b>{eventInfo.timeText}</b>
-                <i className="break-words">{eventInfo.event.title}</i>
+                <i className="break-words overflow-hidden text-ellipsis whitespace-nowrap">{eventInfo.event.title}</i>
             </>
         );
     };
@@ -33,18 +40,20 @@ const Calendario: FC = () => {
                     <Reloj />
                 </div>
             </div>
-            <div className="flex items-center justify-center rounded-lg p-2 max-h-[250px]">
+            <div className="flex items-center justify-center rounded-lg p-2 max-h-[250px] w-full">
                 <div className="bg-gray-100 rounded-lg p-4 w-full max-w-2xl">
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
                         weekends={true}
                         events={events}
-                        // locale="Es"
+                        locale={esLocale}
                         eventContent={renderEventContent}
+                        dayHeaderClassNames="capitalize"
                         buttonText={{
                             today: 'Hoy',
                         }}
+                        titleFormat={{ year: 'numeric', month: 'long' }}
                     />
                 </div>
             </div>
