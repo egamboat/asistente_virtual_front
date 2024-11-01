@@ -1,3 +1,4 @@
+"use client";
 import Reloj from "@/components/reloj/reloj";
 import { Usuario } from "../data";
 

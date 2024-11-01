@@ -1,9 +1,41 @@
 "use client";
+import 'regenerator-runtime/runtime';
 import Reloj from "@/components/reloj/reloj";
 import { useState } from "react";
+import React from 'react';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const Home = () => {
 
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
+  const [isListening, setIsListening] = useState(false);
+
+  const handleButtonClick = () => {
+    if (isListening) {
+      // Detener la escucha
+      SpeechRecognition.stopListening();
+      setIsListening(false);
+    } else {
+      // Reiniciar la transcripción y empezar a escuchar
+      listening;
+      // resetTranscript();
+      SpeechRecognition.startListening({ language: 'es-EC' });
+      setIsListening(true);
+      console.log("Transcripcion:",transcript);
+      console.log('Estado:',isListening)
+    }
+    // Mostrar el transcripto en la consola
+
+  };
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Hemos detectado que tu navegador no soporta la transformación e voz. Lo sentimos!</span>;
+  }
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -26,7 +58,7 @@ const Home = () => {
 
       {/* Botón de micrófono */}
       <div className="flex justify-center items-center">
-        <button className="bg-gray-300 p-6 rounded-lg shadow-lg ">
+        <button onClick={handleButtonClick} className="bg-gray-300 p-6 rounded-lg shadow-lg ">
           {/* <img src="/public/media/imagens/mic.png" alt=""  className="w-8 h-8"  /> */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
