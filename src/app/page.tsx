@@ -3,39 +3,9 @@ import 'regenerator-runtime/runtime';
 import Reloj from "@/components/reloj/reloj";
 import { useState } from "react";
 import React from 'react';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import MicrofonoBoton from '@/components/microfono/microfono';
 
 const Home = () => {
-
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition
-  } = useSpeechRecognition();
-  const [isListening, setIsListening] = useState(false);
-
-  const handleButtonClick = () => {
-    if (isListening) {
-      // Detener la escucha
-      SpeechRecognition.stopListening();
-      setIsListening(false);
-    } else {
-      // Reiniciar la transcripción y empezar a escuchar
-      listening;
-      // resetTranscript();
-      SpeechRecognition.startListening({ language: 'es-EC' });
-      setIsListening(true);
-      console.log("Transcripcion:",transcript);
-      console.log('Estado:',isListening)
-    }
-    // Mostrar el transcripto en la consola
-
-  };
-
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Hemos detectado que tu navegador no soporta la transformación e voz. Lo sentimos!</span>;
-  }
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -58,19 +28,9 @@ const Home = () => {
 
       {/* Botón de micrófono */}
       <div className="flex justify-center items-center">
-        <button onClick={handleButtonClick} className="bg-gray-300 p-6 rounded-lg shadow-lg ">
-          {/* <img src="/public/media/imagens/mic.png" alt=""  className="w-8 h-8"  /> */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            className="w-8 h-8"
-          >
-            <path d="M12 1c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2s-2-.9-2-2V3c0-1.1.9-2 2-2zm5 9V9h-2v1c0 1.7-1.3 3-3 3s-3-1.3-3-3V9H7v1c0 2.4 1.7 4.4 4 4.9V17H8v2h8v-2h-3v-2.1c2.3-.5 4-2.5 4-4.9z" />
-          </svg>
-        </button>
+          <MicrofonoBoton />
       </div>
-    </div>
+    </div >
   );
 }
 

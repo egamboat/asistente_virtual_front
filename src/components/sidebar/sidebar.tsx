@@ -26,7 +26,7 @@ const Sidebar = () => {
           }`}>
 
             <h2 className="text-[1rem] font-bold pt-6 mb-6 break-words">
-              Asistente Virtual
+              noMi
             </h2>
             <nav className="mt-6 p-2">
               <ul>
