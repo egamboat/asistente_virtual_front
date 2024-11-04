@@ -1,4 +1,5 @@
 "use client";
+import 'regenerator-runtime/runtime';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 

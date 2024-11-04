@@ -1,4 +1,5 @@
 "use client";
+import 'regenerator-runtime/runtime';
 import { useState, useEffect } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
@@ -48,7 +49,7 @@ const MicrofonoBoton = () => {
     }, [transcript]);
 
     if (!browserSupportsSpeechRecognition) {
-        return <span>Hemos detectado que tu navegador no soporta la transformación de voz. ¡Lo sentimos!</span>;
+        return <span> Hemos detectado que tu navegador no soporta la transformación de voz. ¡Lo sentimos!</span>;
     }
 
     return (
@@ -67,7 +68,7 @@ const MicrofonoBoton = () => {
                     height={50}
                 />
             </button>
-            <p>Transcripción: {transcript}</p>
+            {/* <p>Transcripción: {transcript}</p> */}
         </div>
     );
 };

@@ -41,7 +41,7 @@ const Calendario: FC = () => {
                     <Reloj />
                 </div>
             </div>
-            <div className="flex items-center justify-center rounded-lg p-2 max-h-[250px] w-full">
+            <div className="flex items-center justify-center rounded-lg p-2  w-full">
                 <div className="bg-gray-100 rounded-lg p-4 w-full max-w-2xl">
                     <FullCalendar
                         plugins={[dayGridPlugin]}

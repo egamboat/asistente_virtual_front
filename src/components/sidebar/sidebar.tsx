@@ -16,7 +16,7 @@ const Sidebar = () => {
           className=""
           onClick={toggleSidebar}
         >
-          {isCollapsed ? "O" : "X"}
+          {isCollapsed ? "☰" : "X"}
         </button>
 
         {!isCollapsed && (
@@ -31,22 +31,22 @@ const Sidebar = () => {
             <nav className="mt-6 p-2">
               <ul>
                 <li className="my-6">
-                  <Link href="/">
+                  <Link href="/asistente/">
                     <p className="hover:text-gray-300">Inicio</p>
                   </Link>
                 </li>
                 <li className="my-6">
-                  <Link href="/calendario">
+                  <Link href="/asistente/calendario">
                     <p className="hover:text-gray-300">Calendario</p>
                   </Link>
                 </li>
                 <li className="my-6">
-                  <Link href="/agenda">
+                  <Link href="/asistente/agenda">
                     <p className="hover:text-gray-300">Agenda</p>
                   </Link>
                 </li>
                 <li className="my-6">
-                  <Link href="/perfil">
+                  <Link href="/asistente/perfil">
                     <p className="hover:text-gray-300">Perfil</p>
                   </Link>
                 </li>

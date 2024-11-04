@@ -1,12 +1,12 @@
 "use client";
 import Reloj from "@/components/reloj/reloj";
-import { Usuario } from "../data";
+import { Usuario } from "../../data";
 import MicrofonoBoton from '@/components/microfono/microfono';
 
 const Perfil = () => {
     return (
         <div className="bg-white flex flex-col justify-between">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full mt-4">
                 <div className="ml-4">
                     <h1 className="text-3xl font-bold">
                         Perfil
