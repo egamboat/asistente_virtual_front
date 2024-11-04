@@ -20,11 +20,11 @@ export default function DashboardLayout({
     <html lang="es">
       <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
         <Sidebar />
-        <main className="flex-1 h-full p-6 m-6">
+        <div className="flex-1 h-full p-4 m-6">
 
           {children}
 
-        </main>
+        </div>
       </body>
     </html>
   );
