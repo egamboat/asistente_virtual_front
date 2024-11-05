@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime';
 import Link from 'next/link'
 import React from 'react';
 // import store from '@/shared/redux/store';
+import {signIn} from 'next-auth/react'
 
 export default function Home() {
   return (
@@ -16,8 +17,10 @@ export default function Home() {
             Simplifica tus tareas diarias con nuestra ayuda.
           </p>
         </div>
-        <a href="/login">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
+        <a>
+          <button 
+          onClick={()=> signIn()}
+          className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
             Iniciar Sesión
           </button>
         </a>

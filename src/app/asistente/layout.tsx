@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../../styles/globals.css";
 import Sidebar from "@/components/sidebar/sidebar";
 import 'regenerator-runtime/runtime';
+import { Providers } from '../providers'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,14 +19,18 @@ export default function DashboardLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
-        <Sidebar />
-        <div className="flex-1 h-full p-4 m-6">
+      <Providers>
 
-          {children}
+        <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
+          <Sidebar />
+          <div className="flex-1 h-full p-4 m-6">
 
-        </div>
-      </body>
+            {children}
+
+          </div>
+        </body>
+      </Providers>
+
     </html>
   );
 }

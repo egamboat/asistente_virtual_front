@@ -15,7 +15,7 @@ const MicrofonoBoton = () => {
 
     // Define los comandos y sus funciones asociadas
     const commands: { [key: string]: () => void } = {
-        "abrir menú": () => alert("Comando detectado: Abrir menú"),
+        "editar": () => alert("Comando detectado: Editar"),
         "cerrar menú": () => alert("Comando detectado: Cerrar menú"),
         "reiniciar": resetTranscript,
         "parar escucha": () => handleStopListening()
@@ -42,8 +42,8 @@ const MicrofonoBoton = () => {
     useEffect(() => {
         Object.keys(commands).forEach((command) => {
             if (transcript.toLowerCase().includes(command)) {
-                commands[command as keyof typeof commands](); // Ejecuta la función asociada al comando
-                resetTranscript();   // Limpia la transcripción después de detectar un comando
+                commands[command as keyof typeof commands](); 
+                resetTranscript(); 
             }
         });
     }, [transcript]);
@@ -56,7 +56,7 @@ const MicrofonoBoton = () => {
         <div>
             <button
                 onClick={handleButtonClick}
-                className={`p-4 border rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${isListening ? 'bg-[#8B0000] border-[#2F0000]' : 'bg-gray-300 border-black'
+                className={`p-4 rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${isListening ? 'bg-[#8B0000] border-[#2F0000]' : 'bg-gray-300 border-black'
                     }`}
                 disabled={listening} // Deshabilita el botón mientras está escuchando
                 title={isListening ? 'Detener escucha' : 'Iniciar escucha'}

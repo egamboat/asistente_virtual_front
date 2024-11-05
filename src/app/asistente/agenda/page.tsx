@@ -2,16 +2,11 @@
 
 import Reloj from "@/components/reloj/reloj";
 import React from 'react';
-import { Evento } from "@/interfaces/interfaceEventos";
+// import { Evento } from "@/interfaces/interfaceEventos";
 import { DataEvento } from "@/app/data";
 import MicrofonoBoton from '@/components/microfono/microfono';
 
-type EventsTableProps = {
-    events: Evento[];
-};
-
-const Agenda: React.FC<EventsTableProps> = ({ events: any }) => {
-
+const Agenda: React.FC = () => {
     const formatDate = (date: string | Date) => {
         const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
@@ -48,7 +43,7 @@ const Agenda: React.FC<EventsTableProps> = ({ events: any }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {DataEvento.map((event: any, index: number) => (
+                        {DataEvento.map((event, index) => (
                             <tr key={index} className="hover:bg-gray-50">
                                 <td className="p-3 text-gray-800">{event.titulo}</td>
                                 <td className="p-3 text-gray-800">{event.descripcion}</td>
@@ -56,6 +51,7 @@ const Agenda: React.FC<EventsTableProps> = ({ events: any }) => {
                                 <td className="p-3 text-gray-800">{formatDate(event.fechaFin)}</td>
                             </tr>
                         ))}
+
                     </tbody>
                 </table>
             </div>

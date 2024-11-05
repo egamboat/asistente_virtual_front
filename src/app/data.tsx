@@ -1,4 +1,6 @@
-export const DataEvento = [
+import { Evento } from "@/interfaces/interfaceEventos";
+
+export const DataEvento: Evento[] = [
   {
     id: '1',
     agendaId: 'A001',

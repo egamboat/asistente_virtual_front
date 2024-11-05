@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../styles/globals.css";
+import 'remixicon/fonts/remixicon.css'
 
 const inter = Inter({ subsets: ["latin"] });
+
 
 export const metadata: Metadata = {
   title: "Asistente Virtual",
@@ -18,9 +20,7 @@ export default function RootLayout({
     <html lang="es">
       <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
         <main className="">
-
-          {children}
-
+            {children}
         </main>
       </body>
     </html>
