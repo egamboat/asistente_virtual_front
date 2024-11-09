@@ -19,18 +19,14 @@ export default function DashboardLayout({
 }>) {
   return (
     <html lang="es">
-      <Providers>
-
-        <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
+      <body className={`flex  font-segoe-ui antialiased ${inter.className}`}>
           <Sidebar />
-          <div className="flex-1 h-full p-4 m-6">
-
-            {children}
-
-          </div>
-        </body>
-      </Providers>
-
+          <main className="flex-1 transition-all duration-300">
+            <div className="p-4 m-6">
+              {children}
+            </div>
+          </main>
+      </body>
     </html>
   );
 }

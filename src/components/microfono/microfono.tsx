@@ -17,6 +17,7 @@ const MicrofonoBoton = () => {
     const commands: { [key: string]: () => void } = {
         "editar": () => alert("Comando detectado: Editar"),
         "cerrar menú": () => alert("Comando detectado: Cerrar menú"),
+        "editar": () => alert("Comando detectado: Editar"),
         "reiniciar": resetTranscript,
         "parar escucha": () => handleStopListening()
     };
