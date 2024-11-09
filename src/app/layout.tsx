@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
+      <body className={`min-h-screen font-segoe-ui antialiased ${inter.className}`}>
         <main className="">
 
           {children}
