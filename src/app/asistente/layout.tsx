@@ -19,7 +19,7 @@ export default function DashboardLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`flex  font-segoe-ui antialiased ${inter.className}`}>
+      <body className={`flex h-full font-segoe-ui antialiased ${inter.className}`}>
           <Sidebar />
           <main className="flex-1 transition-all duration-300">
             <div className="p-4 m-6">

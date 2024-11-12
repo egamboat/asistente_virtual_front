@@ -4,8 +4,10 @@ import Link from "next/link";
 import { googleLogout } from "@react-oauth/google";
 import { UserData } from "@/interfaces/userInterface";
 import { Menu, X, Home, Calendar, BookOpen, User, LogOut } from 'lucide-react';
+import { useRouter } from "next/navigation"; // Importamos el router de Next.js
 
 const Sidebar = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [storedData, setStoredData] = useState<UserData | null>(null);
@@ -40,11 +42,17 @@ const Sidebar = () => {
   };
 
   const logOut = () => {
-    googleLogout();
-    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-      localStorage.removeItem('userData');
-      setStoredData(null);
-      window.location.href = '/';
+    try {
+      googleLogout();
+      if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+        localStorage.removeItem('userData');
+        setStoredData(null);
+        
+        router.push('/');
+        // router.refresh();
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
   };
 
@@ -104,13 +112,13 @@ const Sidebar = () => {
                   onClick={logOut}
                   className="flex items-center gap-3 p-2 rounded-md hover:bg-[#3960D0] transition-colors w-full"
                 >
-                  <LogOut size={20} />
+                  <LogOut size={30} />
                   <div>
                     {storedData && (
                       <div className="flex items-center space-x-2">
                         <img
                           src={storedData.picture}
-                          alt="Descripción de la imagen"
+                          alt=""
                           className="w-[30px] h-[30px] rounded-full"
                         />
                         <p className="text-[0.7rem] font-semibold break break-words" >{storedData.name}</p>

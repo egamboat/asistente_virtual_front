@@ -5,7 +5,7 @@ import { CLIENT_ID } from "@/consts/clientId";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { useState } from 'react';
 // import store from '@/shared/redux/store';
-import { ArrowRight, Calendar, Clock, Users, BookOpen, Menu, X } from 'lucide-react';
+import { Calendar, Clock, Users, BookOpen, Menu, X } from 'lucide-react';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,13 +13,13 @@ export default function Home() {
   const features = [
     {
       icon: <Calendar className="text-blue-600" size={24} />,
-      title: 'Gestión Inteligente de Horarios',
-      description: 'Organiza automáticamente tus clases, horarios de consulta y reuniones académicas'
+      title: 'Gestión Horarios',
+      description: 'Organiza tus clases, horarios de consulta y reuniones académicas.'
     },
     {
       icon: <Clock className="text-blue-600" size={24} />,
       title: 'Resolución de Conflictos',
-      description: 'Detecta y resuelve instantáneamente conflictos entre clases y eventos'
+      description: 'Detecta y resuelve instantáneamente conflictos entre clases y eventos.'
     },
     {
       icon: <Users className="text-blue-600" size={24} />,
@@ -49,7 +49,6 @@ export default function Home() {
               <div className="hidden md:flex items-center space-x-8">
                 <a href="#features" className="text-gray-600 hover:text-[#234AB7]">Características</a>
                 <a href="#demo" className="text-gray-600 hover:text-[#234AB7]">Demostración</a>
-                <a href="#pricing" className="text-gray-600 hover:text-[#234AB7]">Precios</a>
                 <button className="bg-[#234AB7] text-white px-4 py-2 rounded-md hover:bg-[#234AB7]">
                   Prueba Gratis
                 </button>
@@ -70,7 +69,6 @@ export default function Home() {
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#features" className="block px-3 py-2 text-gray-600 hover:text-[#234AB7]">Características</a>
                 <a href="#demo" className="block px-3 py-2 text-gray-600 hover:text-[#234AB7]">Demostración</a>
-                <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#234AB7]">Precios</a>
                 <button className="w-full text-left px-3 py-2 text-gray-600 hover:text-[#234AB7]">
                   Inicia Sesión
                 </button>
@@ -115,11 +113,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <a href="/login">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
-            Iniciar Sesión
-          </button>
-        </a>
       </div>
     </GoogleOAuthProvider>
 
