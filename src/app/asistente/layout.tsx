@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "../../styles/globals.css";
 import Sidebar from "@/components/sidebar/sidebar";
 import 'regenerator-runtime/runtime';
-import { Providers } from '../providers'
 
 const inter = Inter({ subsets: ["latin"] });
 

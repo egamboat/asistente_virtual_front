@@ -7,7 +7,7 @@ import { useChat } from "ai/react";
 
 const Home: React.FC = () => {
 
-  const { messages, input, setInput, handleSubmit, isLoading } = useChat();
+  const { messages, setInput, handleSubmit } = useChat();
   console.log("Mensaje index", messages)
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {

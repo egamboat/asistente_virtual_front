@@ -1,7 +1,7 @@
 import decodeJwt from "@/utils/decodeJwt";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
-import { googleLogout } from "@react-oauth/google";
+// import { googleLogout } from "@react-oauth/google";
 
 export default function Login() {
   const [email, setEmail] = useState<string | null>(null);
@@ -32,11 +32,10 @@ export default function Login() {
     console.log("Login failed");
   }
 
-  const logOut = () => {
-    googleLogout();
-    setEmail(null);
-  };
-
+  // const logOut = () => {
+  //   googleLogout();
+  //   setEmail(null);
+  // };
 
   return (
     <div>

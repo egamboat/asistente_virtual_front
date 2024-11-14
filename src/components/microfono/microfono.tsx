@@ -2,7 +2,7 @@
 import 'regenerator-runtime/runtime';
 import React, { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-
+import Image from 'next/image';
 interface MicrofonoBotonProps {
     onTranscriptionComplete?: (transcribedText: string) => void;
 }
@@ -15,15 +15,15 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         browserSupportsSpeechRecognition
     } = useSpeechRecognition();
 
-    type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
+    // type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
     
     const [isClient, setIsClient] = useState(false);
     const lastTranscriptRef = useRef('');
 
     useEffect(() => {
-        // Marcar como cliente después de montar
         setIsClient(true);
     }, []);
+    
     // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
     // const commandKeywords: Record<CommandKey, string[]> = {
     //     agregar: ["agregar", "agrega", "añadir", "adicionar"],
@@ -104,7 +104,7 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
                     }`}
                 title={listening  ? 'Detener escucha' : 'Iniciar escucha'}
             >
-                <img
+                <Image
                     src={listening  ? "/icons/mic_white.png" : "/icons/mic.png"}
                     alt="mic icon"
                     width={50}
