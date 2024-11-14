@@ -1,14 +1,14 @@
 "use client";
 import 'regenerator-runtime/runtime';
 import Reloj from "@/components/reloj/reloj";
-import React, { useState } from 'react';
+import React from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
 
 const Home: React.FC = () => {
 
   const { messages, input, setInput, handleSubmit, isLoading } = useChat();
-
+  console.log("Mensaje index", messages)
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       setInput(transcribedText);
@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       console.log("Mensaje enviado:", transcribedText);
     }
   };
-  
+
   return (
     <div className="h-full bg-white flex flex-col justify-between">
       <div className="flex justify-between w-full mt-4">
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
           {/* Initial message */}
           <div className="flex justify-start">
-            <div className="bg-purple-200 text-black p-4 rounded-lg shadow-lg mb-6">
+            <div className="bg-gray-800 text-black p-4 rounded-lg shadow-lg mb-6">
               ¿Ocupado? ¡Te ayudo!
             </div>
           </div>

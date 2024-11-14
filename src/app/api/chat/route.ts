@@ -13,7 +13,7 @@ export const runtime = 'edge'
 export async function POST(req: Request) {
 
   const { messages } = await req.json()
-  console.log(messages)
+  console.log("rousets",messages)
 
   const response = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
 
   const stream = OpenAIStream(response)
-  console.log(stream)
+  console.log("respuesta gpt",stream)
   // Respond with the stream
   return new StreamingTextResponse(stream)
 }

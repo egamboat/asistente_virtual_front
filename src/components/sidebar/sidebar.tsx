@@ -89,7 +89,7 @@ const Sidebar = () => {
         <div className={`bg-[#234AB7] text-white h-screen w-64 p-6 shadow-lg`}>
           {/* Logo */}
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold">noMi</h2>
+            <h2 className="text-xl font-bold">Nomi</h2>
           </div>
 
           {/* Navegación */}

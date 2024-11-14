@@ -1,9 +1,8 @@
 "use client";
 import 'regenerator-runtime/runtime';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
-// Define la interfaz de las props
 interface MicrofonoBotonProps {
     onTranscriptionComplete?: (transcribedText: string) => void;
 }
@@ -17,8 +16,8 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
     } = useSpeechRecognition();
 
     type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
-
-    const [isListening, setIsListening] = useState(false);
+    
+    const lastTranscriptRef = useRef('');
 
     // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
     // const commandKeywords: Record<CommandKey, string[]> = {
@@ -43,28 +42,27 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
     // };
 
     const handleButtonClick = () => {
-        if (isListening) {
+        if (listening) {
             handleStopListening();
         } else {
             resetTranscript();
             SpeechRecognition.startListening({ language: 'es-EC', continuous: true });
-            setIsListening(true);
         }
     };
+    
     const handleStopListening = () => {
         SpeechRecognition.stopListening();
-        setIsListening(false);
-        // No enviamos la transcripción aquí
     };
-
+    
     useEffect(() => {
-        if (!listening && !isListening && transcript.trim() !== '') {
+        if (!listening && transcript.trim() !== '' && transcript !== lastTranscriptRef.current) {
+            lastTranscriptRef.current = transcript; // Actualiza la referencia con la nueva transcripción
             if (onTranscriptionComplete) {
                 onTranscriptionComplete(transcript);
             }
             resetTranscript();
         }
-    }, [listening, isListening, transcript, onTranscriptionComplete, resetTranscript]);
+    }, [listening, transcript, onTranscriptionComplete, resetTranscript]);
 
     // Efecto para verificar comandos en la transcripción en tiempo real
     // useEffect(() => {
@@ -92,19 +90,17 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         <div>
             <button
                 onClick={handleButtonClick}
-                className={`p-4 rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${isListening ? 'bg-[#e8d3d3] border-[#2F0000]' : 'bg-gray-300 border-black'
+                className={`p-4 rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${listening  ? 'bg-[#e8d3d3] border-[#2F0000]' : 'bg-gray-300 border-black'
                     }`}
-                title={isListening ? 'Detener escucha' : 'Iniciar escucha'}
+                title={listening  ? 'Detener escucha' : 'Iniciar escucha'}
             >
                 <img
-                    src={isListening ? "/icons/mic_white.png" : "/icons/mic.png"}
+                    src={listening  ? "/icons/mic_white.png" : "/icons/mic.png"}
                     alt="mic icon"
                     width={50}
                     height={50}
                 />
             </button>
-            {/* Puedes mostrar la transcripción en tiempo real si lo deseas */}
-            {/* <p>Transcripción: {transcript}</p> */}
         </div>
     );
 };
