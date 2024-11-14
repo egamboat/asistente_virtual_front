@@ -34,7 +34,11 @@ const Home: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
           {/* Initial message */}
           <div className="flex justify-start">
-            <div className="bg-gray-800 text-black p-4 rounded-lg shadow-lg mb-6">
+
+            <div className="bg-gray-800 text-white p-4 rounded-lg shadow-lg mb-6 text-right">
+              <span className={`text-xs block`} >
+                Nomi
+              </span>
               ¿Ocupado? ¡Te ayudo!
             </div>
           </div>
@@ -89,7 +93,7 @@ const Home: React.FC = () => {
         </form> */}
       </div>
       {/* Botón de micrófono */}
-      <div className="flex justify-center items-center mb-4">
+      <div className="flex justify-center items-center my-4">
         <MicrofonoBoton onTranscriptionComplete={handleTranscriptionComplete} />
       </div>
     </div >

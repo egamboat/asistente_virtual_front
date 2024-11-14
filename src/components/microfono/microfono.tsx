@@ -17,8 +17,13 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
 
     type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
     
+    const [isClient, setIsClient] = useState(false);
     const lastTranscriptRef = useRef('');
 
+    useEffect(() => {
+        // Marcar como cliente después de montar
+        setIsClient(true);
+    }, []);
     // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
     // const commandKeywords: Record<CommandKey, string[]> = {
     //     agregar: ["agregar", "agrega", "añadir", "adicionar"],
@@ -49,6 +54,7 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
             SpeechRecognition.startListening({ language: 'es-EC', continuous: true });
         }
     };
+
     
     const handleStopListening = () => {
         SpeechRecognition.stopListening();
@@ -81,6 +87,10 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
     //         onTranscriptionChange(transcript);
     //     }
     // }, [transcript]);
+
+    if (!isClient) {
+        return <div>Cargando...</div>;
+    }
 
     if (!browserSupportsSpeechRecognition) {
         return <span> Hemos detectado que tu navegador no soporta la transformación de voz. ¡Lo sentimos!</span>;

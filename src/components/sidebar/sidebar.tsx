@@ -116,11 +116,11 @@ const Sidebar = () => {
                   <div>
                     {storedData && (
                       <div className="flex items-center space-x-2">
-                        <img
+                        {/* <img
                           src={storedData.picture}
                           alt=""
                           className="w-[30px] h-[30px] rounded-full"
-                        />
+                        /> */}
                         <p className="text-[0.7rem] font-semibold break break-words" >{storedData.name}</p>
                       </div>
                     )}
