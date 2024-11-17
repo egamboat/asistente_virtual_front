@@ -13,15 +13,15 @@ interface ProcessedContent {
 
 const Home: React.FC = () => {
   const [processedJson, setProcessedJson] = useState(null);
-  const { messages, setInput, handleSubmit } = useChat();
+  const { messages, setInput, handleSubmit, append} = useChat();
   const [isComplete, setIsComplete] = useState(false);
 
-  console.log("Mensaje index", messages)
+  console.log("Mensaje index:", messages)
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
-      setInput(transcribedText);
-      const syntheticEvent = { preventDefault: () => { } };
-      handleSubmit(syntheticEvent as React.FormEvent<HTMLFormElement>);
+      console.log("Transcripción completada:", transcribedText);
+      append({ role: 'user', content: transcribedText });
+      console.log("Mensajes después de append:", messages);
     }
   };
 

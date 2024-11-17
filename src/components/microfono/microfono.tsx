@@ -12,7 +12,8 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         transcript,
         listening,
         resetTranscript,
-        browserSupportsSpeechRecognition
+        browserSupportsSpeechRecognition,
+        finalTranscript
     } = useSpeechRecognition();
 
     // type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
@@ -50,7 +51,7 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         if (listening) {
             handleStopListening();
         } else {
-            resetTranscript();
+            // resetTranscript();
             SpeechRecognition.startListening({ language: 'es-EC', continuous: true });
         }
     };
@@ -61,15 +62,16 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
     };
     
     useEffect(() => {
-        if (!listening && transcript.trim() !== '' && transcript !== lastTranscriptRef.current) {
-            lastTranscriptRef.current = transcript; // Actualiza la referencia con la nueva transcripción
+        if (finalTranscript !== '' && finalTranscript !== lastTranscriptRef.current) {
+            lastTranscriptRef.current = finalTranscript;
             if (onTranscriptionComplete) {
-                onTranscriptionComplete(transcript);
+                onTranscriptionComplete(finalTranscript);
+                console.log(finalTranscript)
             }
             resetTranscript();
         }
-    }, [listening, transcript, onTranscriptionComplete, resetTranscript]);
-
+    }, [finalTranscript, onTranscriptionComplete, resetTranscript]);
+    
     // Efecto para verificar comandos en la transcripción en tiempo real
     // useEffect(() => {
     //     // Verificar y ejecutar comandos
