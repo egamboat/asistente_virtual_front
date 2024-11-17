@@ -20,7 +20,7 @@ export default function DashboardLayout({
       <div className={`flex h-full font-segoe-ui antialiased ${inter.className}`}>
           <Sidebar />
           <div className="flex-1 transition-all duration-300">
-            <div className="p-4 m-6">
+            <div className="p-4 mx-2 mt-6 md:m-6">
               {children}
             </div>
           </div>

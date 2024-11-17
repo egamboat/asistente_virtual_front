@@ -32,29 +32,44 @@ const Agenda: React.FC = () => {
             </div>
 
 
-            <div className="overflow-x-auto p-4  mt-32">
-                <table className="min-w-full bg-[#D9D9D9]">
-                    <thead className="">
-                        <tr className="">
-                            <th className="p-3 text-left font-semibold border-b">Evento</th>
-                            <th className="p-3 text-left font-semibold border-b">Información</th>
-                            <th className="p-3 text-left font-semibold border-b">Fecha Inicio</th>
-                            <th className="p-3 text-left font-semibold border-b">Fecha Fin</th>
+            <div className="overflow-x-auto p-4 mt-8 md:mt-26">
+                <table className="min-w-full table-auto border-collapse bg-white shadow-lg rounded-lg">
+                    <thead className="bg-[#3960D0] text-white">
+                        <tr>
+                            <th className="p-4 text-left font-semibold border-b-2">Evento</th>
+                            <th className="p-4 text-left font-semibold border-b-2">Información</th>
+                            <th className="p-4 text-left font-semibold border-b-2">Fecha Inicio</th>
+                            <th className="p-4 text-left font-semibold border-b-2">Fecha Fin</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {DataEvento.map((event, index) => (
-                            <tr key={index} className="hover:bg-gray-50">
-                                <td className="p-3 text-gray-800">{event.titulo}</td>
-                                <td className="p-3 text-gray-800">{event.descripcion}</td>
-                                <td className="p-3 text-gray-800">{formatDate(event.fechaInicio)}</td>
-                                <td className="p-3 text-gray-800">{formatDate(event.fechaFin)}</td>
-                            </tr>
-                        ))}
 
+                    <tbody>
+                        {DataEvento.length > 0 ? (
+                            DataEvento.map((event, index) => (
+                                <tr
+                                    key={index}
+                                    className="odd:bg-gray-50 even:bg-white hover:bg-blue-100 transition-colors"
+                                >
+                                    <td className="p-4 text-gray-700 border-b">{event.titulo}</td>
+                                    <td className="p-4 text-gray-700 border-b">{event.descripcion}</td>
+                                    <td className="p-4 text-gray-700 border-b">{formatDate(event.fechaInicio)}</td>
+                                    <td className="p-4 text-gray-700 border-b">{formatDate(event.fechaFin)}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    className="p-4 text-center text-gray-600 font-semibold italic border-b"
+                                >
+                                    No hay eventos disponibles.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
+
 
             <div className="flex justify-center items-center">
                 <MicrofonoBoton />

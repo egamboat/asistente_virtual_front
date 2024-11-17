@@ -1,22 +1,98 @@
 "use client";
 import 'regenerator-runtime/runtime';
 import Reloj from "@/components/reloj/reloj";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
 
-const Home: React.FC = () => {
+interface ProcessedContent {
+  userMessage: string;
+  json?: any;
+  isComplete: boolean;
+}
 
+const Home: React.FC = () => {
+  const [processedJson, setProcessedJson] = useState(null);
   const { messages, setInput, handleSubmit } = useChat();
+  const [isComplete, setIsComplete] = useState(false);
+
   console.log("Mensaje index", messages)
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       setInput(transcribedText);
       const syntheticEvent = { preventDefault: () => { } };
       handleSubmit(syntheticEvent as React.FormEvent<HTMLFormElement>);
-      console.log("Mensaje enviado:", transcribedText);
     }
   };
+
+  const handleDataSend = (data: any) => {
+    console.log("Llegó:", data)
+    // fetch('/api/saveEvent', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log('Éxito:', data);
+    //     // Opcional: Proporcionar retroalimentación al usuario o actualizar el estado
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error:', error);
+    //   });
+  };
+
+  // Función para procesar el contenido del mensaje de la API
+  const processAssistantMessage = (messageContent: string): ProcessedContent => {
+    try {
+
+      const jsonStart = messageContent.indexOf("JSON:");
+      const jsonEnd = messageContent.indexOf("}", jsonStart) + 1;
+      const jsonPart = messageContent.slice(jsonStart + 5, jsonEnd).trim();
+      const parsedJson = JSON.parse(jsonPart);
+
+      const userMessageStart = messageContent.indexOf("Respuesta al usuario:") + 22;
+      const userMessage = messageContent.slice(userMessageStart).trim();
+
+      const isComplete = parsedJson.completo;
+
+      // Retornar los datos procesados sin actualizar el estado
+      return { json: parsedJson, userMessage, isComplete };
+    } catch (error) {
+      console.error("Error procesando el mensaje del asistente:", error);
+      return { userMessage: messageContent, isComplete: false };
+    }
+  };
+
+  useEffect(() => {
+    const assistantMessages = messages.filter((m) => m.role === "assistant");
+    if (assistantMessages.length > 0) {
+      const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
+      const processedContent = processAssistantMessage(lastAssistantMessage.content);
+
+      setProcessedJson(processedContent.json);
+      setIsComplete(processedContent.isComplete);
+
+      if (processedContent.isComplete && processedContent.json) {
+        const dataSend = {
+          // id: processedContent.json.id,
+          // agendaId: processedContent.json.agendaId,
+          titulo: processedContent.json.titulo,
+          tipoEventoId: processedContent.json.tipoEventoId,
+          descripcion: processedContent.json.descripcion,
+          fechaInicio: processedContent.json.fechaInicio,
+          fechaFin: processedContent.json.fechaFin,
+          modalidad: processedContent.json.modalidad,
+          // completo: processedContent.json.completo,
+        };
+        handleDataSend(dataSend);
+      }
+    }
+  }, [messages]);
+
+
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -44,7 +120,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* Chat messages */}
-          <div className="text-white">
+          {/* <div className="text-white">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -69,30 +145,40 @@ const Home: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div> */}
+          {/* Renderizar los mensajes del chat */}
+
+          <div className="text-white">
+            {messages.map((m) => {
+              const isAssistant = m.role === "assistant";
+              const processedContent: ProcessedContent = isAssistant
+                ? processAssistantMessage(m.content)
+                : { userMessage: m.content, isComplete: false };
+
+
+              // Ahora TypeScript reconoce las propiedades opcionales
+              return (
+                <div key={m.id} className={`flex ${isAssistant ? "justify-start" : "justify-end"} mb-2`}>
+                  <div className={`max-w-[75%] p-2 rounded-md ${isAssistant ? "bg-gray-800" : "bg-[#D9D9D9]"}`}>
+                    <span className={`text-xs block ${isAssistant ? "text-right" : "text-left"}`}>
+                      {isAssistant ? "Nomi" : "Tú"}
+                    </span>
+                    <div className={`mt-1 ${isAssistant ? "text-white" : "text-black"}`}>
+                      <p>{processedContent.userMessage}</p>
+                      {processedContent.json && (
+                        <pre className="bg-gray-700 p-2 rounded-md text-xs mt-2">
+                          {JSON.stringify(processedContent.json, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
           </div>
         </div>
-
-        {/* Form */}
-        {/* <form onSubmit={handleSubmit} className="max-w-xl w-full mt-auto">
-          <div className="flex justify-between my-4">
-            <button
-              className="bg-blue-600 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-50"
-              disabled={isLoading || !input}
-            >
-              Enviar
-            </button>
-          </div>
-          <textarea
-            rows={2}
-            value={input}
-            onChange={handleInputChange}
-            className="text-black bg-slate-300 px-2 py-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-            placeholder="¿Qué deseas hacer?"
-            autoFocus
-          />
-        </form> */}
       </div>
-      {/* Botón de micrófono */}
       <div className="flex justify-center items-center my-4">
         <MicrofonoBoton onTranscriptionComplete={handleTranscriptionComplete} />
       </div>
