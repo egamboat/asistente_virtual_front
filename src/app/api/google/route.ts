@@ -28,8 +28,26 @@ export async function POST(request: Request) {
   }
 
   try {
-    const payload = await verify(body).catch(console.error);
-    return NextResponse.json(payload);
+    const payload = await verify(body);
+
+    // Enviar el payload verificado al backend
+    const backendResponse = await fetch("http://localhost:8000/auth/google/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ payload }),
+    });
+
+    if (!backendResponse.ok) {
+      return NextResponse.json(
+        { message: "Backend authentication failed" },
+        { status: backendResponse.status }
+      );
+    }
+
+    const tokens = await backendResponse.json();
+    return NextResponse.json(tokens);
   } catch (error) {
     const response = NextResponse.json(
       {

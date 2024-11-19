@@ -4,7 +4,12 @@ import Reloj from "@/components/reloj/reloj";
 import React, { useEffect, useState } from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
-
+import {
+  // handleCreateEvent,
+  handleEditEvent,
+  handleDeleteEvent,
+  handleConsultEvents,
+} from "@/utils/servicios"
 interface ProcessedContent {
   userMessage: string;
   // eslint-disable-next-line
@@ -14,12 +19,8 @@ interface ProcessedContent {
 
 const Home: React.FC = () => {
   const [processedJson, setProcessedJson] = useState(null);
-  const { messages,append} = useChat();
+  const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
-  
-  console.log("isComplete:", isComplete)
-  console.log("processedJson:", processedJson)
-  console.log("Mensaje index:", messages)
 
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
@@ -46,6 +47,48 @@ const Home: React.FC = () => {
     //   .catch((error) => {
     //     console.error('Error:', error);
     //   });
+  };
+
+  const handleEditEventWrapper = async (transcribedText: string) => {
+    try {
+      const message = {
+        role: "user" as const, // Aseguramos el tipo estático
+        content: transcribedText,
+      };
+      await handleEditEvent(message, async (msg) => {
+        await append(msg); // Espera la promesa devuelta por append
+      });
+    } catch (error) {
+      console.error("Error en handleEditEventWrapper:", error);
+    }
+  };
+
+  const handleDeleteEventWrapper = async (transcribedText: string) => {
+    try {
+      const message = {
+        role: "user" as const,
+        content: transcribedText,
+      };
+      await handleDeleteEvent(message, async (msg) => {
+        await append(msg); // Maneja correctamente el retorno
+      });
+    } catch (error) {
+      console.error("Error en handleDeleteEventWrapper:", error);
+    }
+  };
+
+  const handleConsultEventsWrapper = async (transcribedText: string) => {
+    try {
+      const message = {
+        role: "user" as const,
+        content: transcribedText,
+      };
+      await handleConsultEvents(message, async (msg) => {
+        await append(msg); // Maneja correctamente el retorno
+      });
+    } catch (error) {
+      console.error("Error en handleConsultEventsWrapper:", error);
+    }
   };
 
   // Función para procesar el contenido del mensaje de la API
@@ -122,36 +165,6 @@ const Home: React.FC = () => {
               ¿Ocupado? ¡Te ayudo!
             </div>
           </div>
-
-          {/* Chat messages */}
-          {/* <div className="text-white">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex ${m.role === "assistant" ? "justify-start" : "justify-end"} mb-2`}
-              >
-                <div
-                  className={`max-w-[75%] p-2 rounded-md ${m.role === "assistant"
-                    ? "bg-gray-800"
-                    : "bg-[#D9D9D9]"
-                    }`}
-                >
-                  <span
-                    className={`text-xs block ${m.role === "assistant" ? "text-right" : "text-left"
-                      }`}
-                  >
-                    {m.role === "assistant" ? "Nomi" : "Tú"}
-                  </span>
-                  <div className={`mt-1 ${m.role === "assistant" ? "text-white" : "text-black"
-                    }`}>
-                    {m.content}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
-          {/* Renderizar los mensajes del chat */}
-
           <div className="text-white">
             {messages.map((m) => {
               const isAssistant = m.role === "assistant";
@@ -169,11 +182,11 @@ const Home: React.FC = () => {
                     </span>
                     <div className={`mt-1 ${isAssistant ? "text-white" : "text-black"}`}>
                       <p>{processedContent.userMessage}</p>
-                      {processedContent.json && (
+                      {/* {processedContent.json && (
                         <pre className="bg-gray-700 p-2 rounded-md text-xs mt-2">
                           {JSON.stringify(processedContent.json, null, 2)}
                         </pre>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>
@@ -184,7 +197,25 @@ const Home: React.FC = () => {
         </div>
       </div>
       <div className="flex justify-center items-center my-4">
-        <MicrofonoBoton onTranscriptionComplete={handleTranscriptionComplete} />
+        <MicrofonoBoton
+          onTranscriptionComplete={handleTranscriptionComplete}
+          onEditEvent={(transcribedText: string) => {
+            handleEditEventWrapper(transcribedText)
+              .then(() => console.log("Edición completada"))
+              .catch((err) => console.error("Error en edición:", err));
+          }}
+          onDeleteEvent={(transcribedText: string) => {
+            handleDeleteEventWrapper(transcribedText)
+              .then(() => console.log("Eliminación completada"))
+              .catch((err) => console.error("Error en eliminación:", err));
+          }}
+          onConsultEvents={(transcribedText: string) => {
+            handleConsultEventsWrapper(transcribedText)
+              .then(() => console.log("Consulta completada"))
+              .catch((err) => console.error("Error en consulta:", err));
+          }}
+        />
+
       </div>
     </div >
   );

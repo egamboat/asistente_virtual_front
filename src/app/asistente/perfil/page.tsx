@@ -8,16 +8,18 @@ import { useEffect, useState } from "react";
 const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
 
+    
+
     useEffect(() => {
         if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-          const storedDataString = localStorage.getItem('userData');
-          if (storedDataString) {
-            const parsedData: UserData = JSON.parse(storedDataString);
-            setStoredData(parsedData);
-          }
+            const storedDataString = localStorage.getItem('userData');
+            if (storedDataString) {
+                const parsedData: UserData = JSON.parse(storedDataString);
+                setStoredData(parsedData);
+            }
         }
-      }, []);
-      
+    }, []);
+
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -53,7 +55,9 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-
+            {/* <button onClick={fetchProtectedData}>
+                Fetch Protected Data
+            </button> */}
             <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div>
