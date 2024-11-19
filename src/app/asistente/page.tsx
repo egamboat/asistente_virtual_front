@@ -7,16 +7,20 @@ import { useChat } from "ai/react";
 
 interface ProcessedContent {
   userMessage: string;
+  // eslint-disable-next-line
   json?: any;
   isComplete: boolean;
 }
 
 const Home: React.FC = () => {
   const [processedJson, setProcessedJson] = useState(null);
-  const { messages, setInput, handleSubmit, append} = useChat();
+  const { messages,append} = useChat();
   const [isComplete, setIsComplete] = useState(false);
-
+  
+  console.log("isComplete:", isComplete)
+  console.log("processedJson:", processedJson)
   console.log("Mensaje index:", messages)
+
   const handleTranscriptionComplete = (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       console.log("Transcripción completada:", transcribedText);

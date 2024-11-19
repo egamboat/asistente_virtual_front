@@ -9,7 +9,7 @@ interface MicrofonoBotonProps {
 
 const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete }) => {
     const {
-        transcript,
+        // transcript,
         listening,
         resetTranscript,
         browserSupportsSpeechRecognition,
