@@ -46,42 +46,53 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
     };
 
     // Mapeo de funciones para cada comando
-    const commands: Record<CommandKey, () => void> = {
-        agregar: () => {
-            if (onTranscriptionComplete) {
-                onTranscriptionComplete(finalTranscript);
-            }
+    const commands: Record<CommandKey, () => Promise<void>> = {
+        agregar: async () => {
+          if (onTranscriptionComplete) {
+            await onTranscriptionComplete(finalTranscript);
+            resetTranscript();
+          }
         },
-        editar: () => {
-            if (onEditEvent) {
-                onEditEvent(finalTranscript);
-            }
+        editar: async () => {
+          if (onEditEvent) {
+            await onEditEvent(finalTranscript);
+            resetTranscript();
+          }
         },
-        eliminar: () => {
-            if (onDeleteEvent) {
-                onDeleteEvent(finalTranscript);
-            }
+        eliminar: async () => {
+          if (onDeleteEvent) {
+            await onDeleteEvent(finalTranscript);
+            resetTranscript();
+          }
         },
-        consultar: () => {
-            console.log("Consultar")
-            if (onConsultEvents) {
-                onConsultEvents(finalTranscript);
-            }
+        consultar: async () => {
+          console.log("Consultar")
+          if (onConsultEvents) {
+            await onConsultEvents(finalTranscript);
+            resetTranscript();
+          }
         },
-        "cerrar menú": () => {
-            // Implementar si es necesario
-            alert("Comando detectado: Cerrar menú");
+        "cerrar menú": async () => {
+          // Implementar si es necesario
+          alert("Comando detectado: Cerrar menú");
+          resetTranscript();
         },
-        reiniciar: () => resetTranscript(),
-        "parar escucha": () => handleStopListening()
-    };
+        reiniciar: async () => {
+          resetTranscript();
+        },
+        "parar escucha": async () => {
+          handleStopListening();
+          resetTranscript();
+        }
+      };
+      
 
     const handleButtonClick = () => {
         if (listening) {
             handleStopListening();
         } else {
             // resetTranscript();
-            SpeechRecognition.startListening({ language: 'es-EC', continuous: true });
+            SpeechRecognition.startListening({ language: 'es-EC', continuous: true, interimResults: false });
         }
     };
 
@@ -92,31 +103,30 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
 
     useEffect(() => {
         if (finalTranscript !== '' && finalTranscript !== lastTranscriptRef.current) {
-            lastTranscriptRef.current = finalTranscript;
-            // Aquí podemos verificar si el transcript contiene algún comando
-            const lowerTranscript = finalTranscript.toLowerCase();
-            let commandFound = false;
-
+          lastTranscriptRef.current = finalTranscript;
+          const lowerTranscript = finalTranscript.toLowerCase();
+          let commandFound = false;
+      
+          (async () => {
             for (const [command, keywords] of Object.entries(commandKeywords)) {
-                for (const keyword of keywords) {
-                    if (lowerTranscript.includes(keyword)) {
-                        commands[command as CommandKey]();
-                        resetTranscript();
-                        commandFound = true;
-                        break;
-                    }
+              for (const keyword of keywords) {
+                if (lowerTranscript.includes(keyword)) {
+                  await commands[command as CommandKey]();
+                  commandFound = true;
+                  break;
                 }
-                if (commandFound) break;
+              }
+              if (commandFound) break;
             }
-
-            // Si no se encontró ningún comando, asumimos que es para agregar un evento
+      
             if (!commandFound && onTranscriptionComplete) {
-                onTranscriptionComplete(finalTranscript);
-                resetTranscript();
+              await onTranscriptionComplete(finalTranscript);
+              resetTranscript();
             }
+          })();
         }
-    }, [finalTranscript, commandKeywords, commands, onTranscriptionComplete, onEditEvent, onDeleteEvent, onConsultEvents, resetTranscript]);
-
+      }, [finalTranscript, commandKeywords, commands, onTranscriptionComplete, onEditEvent, onDeleteEvent, onConsultEvents, resetTranscript]);
+      
 
     // Efecto para verificar comandos en la transcripción en tiempo real
     // useEffect(() => {

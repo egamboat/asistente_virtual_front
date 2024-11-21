@@ -22,10 +22,10 @@ const Home: React.FC = () => {
   const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
 
-  const handleTranscriptionComplete = (transcribedText: string) => {
+  const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       console.log("Transcripción completada:", transcribedText);
-      append({ role: 'user', content: transcribedText });
+      await append({ role: 'user', content: transcribedText });
       console.log("Mensajes después de append:", messages);
     }
   };
@@ -49,47 +49,38 @@ const Home: React.FC = () => {
     //   });
   };
 
-  const handleEditEventWrapper = async (transcribedText: string) => {
+  const handleCommandWrapper = async (
+    transcribedText: string,
+    handler: (message: any, append: (msg: any) => Promise<void>) => Promise<void>
+  ) => {
     try {
+      // Agregar el mensaje del usuario al chat
+      await append({ role: 'user', content: transcribedText });
+
       const message = {
-        role: "user" as const, // Aseguramos el tipo estático
+        role: "user" as const,
         content: transcribedText,
       };
-      await handleEditEvent(message, async (msg) => {
-        await append(msg); // Espera la promesa devuelta por append
+      await handler(message, async (msg) => {
+        await append(msg); // Agregar la respuesta del asistente
       });
     } catch (error) {
-      console.error("Error en handleEditEventWrapper:", error);
+      console.error("Error en handleCommandWrapper:", error);
     }
+  };
+
+  const handleEditEventWrapper = async (transcribedText: string) => {
+    await handleCommandWrapper(transcribedText, handleEditEvent);
   };
 
   const handleDeleteEventWrapper = async (transcribedText: string) => {
-    try {
-      const message = {
-        role: "user" as const,
-        content: transcribedText,
-      };
-      await handleDeleteEvent(message, async (msg) => {
-        await append(msg); // Maneja correctamente el retorno
-      });
-    } catch (error) {
-      console.error("Error en handleDeleteEventWrapper:", error);
-    }
+    await handleCommandWrapper(transcribedText, handleDeleteEvent);
   };
 
   const handleConsultEventsWrapper = async (transcribedText: string) => {
-    try {
-      const message = {
-        role: "user" as const,
-        content: transcribedText,
-      };
-      await handleConsultEvents(message, async (msg) => {
-        await append(msg); // Maneja correctamente el retorno
-      });
-    } catch (error) {
-      console.error("Error en handleConsultEventsWrapper:", error);
-    }
+    await handleCommandWrapper(transcribedText, handleConsultEvents);
   };
+
 
   // Función para procesar el contenido del mensaje de la API
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
@@ -108,7 +99,7 @@ const Home: React.FC = () => {
       // Retornar los datos procesados sin actualizar el estado
       return { json: parsedJson, userMessage, isComplete };
     } catch (error) {
-      console.error("Error procesando el mensaje del asistente:", error);
+      // console.error("Error procesando el mensaje del asistente:", error);
       return { userMessage: messageContent, isComplete: false };
     }
   };

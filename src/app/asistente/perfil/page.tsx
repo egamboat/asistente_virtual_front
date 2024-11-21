@@ -4,11 +4,10 @@ import { Usuario } from "../../data";
 import { UserData } from "@/interfaces/userInterface";
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useEffect, useState } from "react";
+import { customFetch } from "@/components/refresh_token";
 
 const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
-
-    
 
     useEffect(() => {
         if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
@@ -20,6 +19,40 @@ const Perfil = () => {
         }
     }, []);
 
+
+    async function sendDataToBackend() {
+      const url = 'http://localhost:8000/asistente/api/eventos/';
+      const payload = {
+        descripcion: "Evento de prueba desde el front 333",
+        fecha_inicio: "2024-11-20T22:00:00",
+        fecha_fin: "2024-11-21T22:00:00",
+        agenda: 1,
+        tipo_evento: 1,
+        modalidad: 2,
+      };
+    
+      try {
+        const response = await customFetch(url, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Respuesta del backend:', data);
+          alert('Datos enviados con éxito');
+        } else {
+          const errorData = await response.json();
+          console.error('Error del backend:', errorData);
+          alert('Error al enviar los datos al backend');
+        }
+      } catch (error) {
+        console.error('Error al realizar la solicitud:', error);
+        alert('Hubo un error al conectar con el backend');
+      }
+    }
+    
+    
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -58,6 +91,8 @@ const Perfil = () => {
             {/* <button onClick={fetchProtectedData}>
                 Fetch Protected Data
             </button> */}
+                  <button onClick={sendDataToBackend}>Probar Envío al Backend</button>
+
             <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div>

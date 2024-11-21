@@ -4,9 +4,9 @@ import Login from "@/components/Login";
 import { CLIENT_ID } from "@/consts/clientId";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { useEffect, useState } from 'react';
-// import store from '@/shared/redux/store';
 import { Calendar, Clock, Users, BookOpen, Menu, X } from 'lucide-react';
 import Cargando from '@/components/loading';
+import Image from 'next/image';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,11 +18,11 @@ export default function Home() {
       title: 'Gestión Horarios',
       description: 'Organiza tus clases, horarios de consulta y reuniones académicas.'
     },
-    {
-      icon: <Clock className="text-blue-600" size={24} />,
-      title: 'Resolución de Conflictos',
-      description: 'Detecta y resuelve instantáneamente conflictos entre clases y eventos.'
-    },
+    // {
+    //   icon: <Clock className="text-blue-600" size={24} />,
+    //   title: 'Resolución de Conflictos',
+    //   description: 'Detecta y resuelve instantáneamente conflictos entre clases y eventos.'
+    // },
     {
       icon: <Users className="text-blue-600" size={24} />,
       title: 'Horarios de Consulta',
@@ -106,9 +106,17 @@ export default function Home() {
         {/* Sección Hero */}
         <div className="pt-32 pb-20 text-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#234AB7] mb-8">
-              Nomi  <span className="text-gray-900 text-3xl">¡Gestiona tu Agenda!</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#234AB7] mb-4 flex justify-center items-center">
+              <Image
+                src="/logo_negro.png"
+                width={250}
+                height={100}
+                alt="Logo Nomi Asistente Virtual"
+                className="mr-2"
+              />
+              <span className="text-gray-900 text-3xl">¡Gestiona tu Agenda!</span>
             </h1>
+
             {(loading) && <Cargando />}
 
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">

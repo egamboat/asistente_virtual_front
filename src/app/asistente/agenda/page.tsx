@@ -1,13 +1,54 @@
 "use client";
 
 import Reloj from "@/components/reloj/reloj";
-import React from 'react';
-// import { Evento } from "@/interfaces/interfaceEventos";
+import React, { useEffect, useState } from 'react';
 import { DataEvento } from "@/app/data";
 import MicrofonoBoton from '@/components/microfono/microfono';
+import { customFetch } from "@/components/refresh_token";
+import { Evento } from "@/interfaces/interfaceEventos";
+
 
 const Agenda: React.FC = () => {
-    const formatDate = (date: string | Date) => {
+    const [events, setEvents] = useState<Evento[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<any>(null);
+
+    useEffect(() => {
+        async function fetchEvents() {
+            try {
+                const response = await customFetch('http://localhost:8000/asistente/api/eventos/', {
+                    method: 'GET',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setEvents(data);
+                    console.log("Eventos", events)
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData);
+                    console.error('Error al obtener los eventos:', errorData);
+                }
+            } catch (error) {
+                setError(error);
+                console.error('Error al realizar la solicitud:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchEvents();
+    }, []);
+
+    const formatDate = (dateString: string | Date) => {
+        if (typeof dateString === 'string') {
+            // Reemplaza 'Z' por '+00:00'
+            dateString = dateString.replace('Z', '+00:00');
+        }
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Fecha inválida';
+        }
         const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: 'short',
@@ -15,8 +56,9 @@ const Agenda: React.FC = () => {
             hour: '2-digit',
             minute: '2-digit',
         };
-        return new Date(date).toLocaleDateString('en-US', options);
+        return date.toLocaleString('es-ES', options);
     };
+
 
     return (
         <div className="h-fulll bg-white flex flex-col justify-between">
@@ -44,8 +86,8 @@ const Agenda: React.FC = () => {
                     </thead>
 
                     <tbody>
-                        {DataEvento.length > 0 ? (
-                            DataEvento.map((event, index) => (
+                        {events.length > 0 ? (
+                            events.map((event, index) => (
                                 <tr
                                     key={index}
                                     className="odd:bg-gray-50 even:bg-white hover:bg-blue-100 transition-colors"
