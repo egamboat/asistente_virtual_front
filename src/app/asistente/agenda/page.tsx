@@ -6,24 +6,24 @@ import { DataEvento } from "@/app/data";
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { customFetch } from "@/components/refresh_token";
 import { Evento } from "@/interfaces/interfaceEventos";
-
+import DataTable from "react-data-table-component"
 
 const Agenda: React.FC = () => {
-    const [events, setEvents] = useState<Evento[]>([]);
+    const [dataEvent, setEvents] = useState<Evento[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<any>(null);
 
     useEffect(() => {
         async function fetchEvents() {
             try {
-                const response = await customFetch('http://localhost:8000/asistente/api/eventos/', {
-                    method: 'GET',
-                });
+                const response = await customFetch(`${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`,
+                    {
+                        method: 'GET',
+                    });
 
                 if (response.ok) {
                     const data = await response.json();
                     setEvents(data);
-                    console.log("Eventos", events)
                 } else {
                     const errorData = await response.json();
                     setError(errorData);
@@ -39,26 +39,84 @@ const Agenda: React.FC = () => {
 
         fetchEvents();
     }, []);
+    console.log("Eventos", dataEvent)
 
     const formatDate = (dateString: string | Date) => {
-        if (typeof dateString === 'string') {
-            // Reemplaza 'Z' por '+00:00'
-            dateString = dateString.replace('Z', '+00:00');
+        if (typeof dateString === "string") {
+            dateString = dateString.replace("Z", "+00:00");
         }
         const date = new Date(dateString);
         if (isNaN(date.getTime())) {
-            return 'Fecha inválida';
+            return "Fecha inválida";
         }
         const options: Intl.DateTimeFormatOptions = {
-            year: 'numeric',
-            month: 'short',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
         };
-        return date.toLocaleString('es-ES', options);
+        return date.toLocaleString("es-ES", options);
     };
 
+
+    const columns = [
+        {
+            name: "Descripción",
+            selector: (row: any) => row.descripcion,
+            sortable: true,
+        },
+        {
+            name: "Fecha Inicio",
+            selector: (row: any) => formatDate(row.fecha_inicio),
+            sortable: true,
+        },
+        {
+            name: "Fecha Fin",
+            selector: (row: any) => formatDate(row.fecha_fin),
+            sortable: true,
+        },
+        {
+            name: "Modalidad",
+            selector: (row: any) => row.modalidad_descripcion,
+        },
+    ];
+
+    const paginationOptions = {
+        rowsPerPageText: "Filas por página",
+        rangeSeparatorText: "de",
+        selectAllRowsItem: true,
+        selectAllRowsItemText: "Todos",
+    };
+
+    const customStyles = {
+        headCells: {
+            style: {
+                backgroundColor: "#3960D0",
+                color: "white",
+                fontWeight: "bold",
+                fontSize: "14px",
+                textAlign: "center",
+            },
+        },
+        rows: {
+            style: {
+                backgroundColor: "white",
+                "&:nth-of-type(odd)": {
+                    backgroundColor: "#f5f5f5", // Alternar colores
+                },
+                "&:hover": {
+                    backgroundColor: "#e2e8f0", // Hover
+                },
+            },
+        },
+        cells: {
+            style: {
+                padding: "8px",
+                textAlign: "center",
+            },
+        },
+    };
 
     return (
         <div className="h-fulll bg-white flex flex-col justify-between">
@@ -75,41 +133,18 @@ const Agenda: React.FC = () => {
 
 
             <div className="overflow-x-auto p-4 mt-8 md:mt-26">
-                <table className="min-w-full table-auto border-collapse bg-white shadow-lg rounded-lg">
-                    <thead className="bg-[#3960D0] text-white">
-                        <tr>
-                            <th className="p-4 text-left font-semibold border-b-2">Evento</th>
-                            <th className="p-4 text-left font-semibold border-b-2">Información</th>
-                            <th className="p-4 text-left font-semibold border-b-2">Fecha Inicio</th>
-                            <th className="p-4 text-left font-semibold border-b-2">Fecha Fin</th>
-                        </tr>
-                    </thead>
+                <div className="overflow-x-auto p-4 mt-8 md:mt-26">
+                    <DataTable
+                        columns={columns}
+                        data={dataEvent}
+                        progressPending={loading}
+                        noDataComponent="No hay eventos disponibles."
+                        pagination
+                        paginationComponentOptions={paginationOptions}
+                        
+                    />
+                </div>
 
-                    <tbody>
-                        {events.length > 0 ? (
-                            events.map((event, index) => (
-                                <tr
-                                    key={index}
-                                    className="odd:bg-gray-50 even:bg-white hover:bg-blue-100 transition-colors"
-                                >
-                                    <td className="p-4 text-gray-700 border-b">{event.titulo}</td>
-                                    <td className="p-4 text-gray-700 border-b">{event.descripcion}</td>
-                                    <td className="p-4 text-gray-700 border-b">{formatDate(event.fechaInicio)}</td>
-                                    <td className="p-4 text-gray-700 border-b">{formatDate(event.fechaFin)}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td
-                                    colSpan={4}
-                                    className="p-4 text-center text-gray-600 font-semibold italic border-b"
-                                >
-                                    No hay eventos disponibles.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
             </div>
 
 

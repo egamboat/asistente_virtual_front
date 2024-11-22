@@ -5,7 +5,6 @@ import 'remixicon/fonts/remixicon.css'
 
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
   title: "Asistente Virtual",
   description: "Asistente Vitual para Docentes de UNEMI",

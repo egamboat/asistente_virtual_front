@@ -1,7 +1,6 @@
 import decodeJwt from "@/utils/decodeJwt";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
-// import { googleLogout } from "@react-oauth/google";
 
 export default function Login() {
   const [email, setEmail] = useState<string | null>(null);
@@ -19,11 +18,9 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Guarda los tokens JWT en el almacenamiento local
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
 
-        // Redirige o actualiza el estado de autenticación
         window.location.href = '/asistente/';
       } else {
         console.error('Error al autenticar con el backend:', data.error);
@@ -34,16 +31,13 @@ export default function Login() {
   }
 
   async function handleSuccess(credentialResponse: any) {
-    // debugger;
-    // console.log("credentialResponse", credentialResponse);
+
     if (credentialResponse.credential) {
       const { payload } = decodeJwt(credentialResponse.credential);
       const token=(credentialResponse.credential);
       localStorage.setItem('token', credentialResponse.credential);
 
-      // Llamar a la función para enviar el token al backend
-      await sendTokenToBackend(token);
-      console.log("payload credential", payload);
+
       const response = await fetch("/api/google", {
         method: "POST",
         body: JSON.stringify({
@@ -52,9 +46,10 @@ export default function Login() {
       });
       const json = await response.json();
 
+      await sendTokenToBackend(token);
 
       localStorage.setItem('userData', JSON.stringify(json));
-      console.log("Objeto JSON guardado en localStorage");
+
       window.location.href = '/asistente/'
       setEmail(json.email);
     }
@@ -64,10 +59,7 @@ export default function Login() {
     console.log("Login failed");
   }
 
-  // const logOut = () => {
-  //   googleLogout();
-  //   setEmail(null);
-  // };
+
   useEffect(() => {
     console.log(GoogleLogin);
   }, []);
