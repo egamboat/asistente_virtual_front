@@ -49,7 +49,6 @@ const Sidebar = () => {
         setStoredData(null);
         
         router.push('/');
-        // router.refresh();
       }
     } catch (error) {
       console.error('Error during logout:', error);

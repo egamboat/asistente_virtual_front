@@ -5,9 +5,17 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import Image from 'next/image';
 interface MicrofonoBotonProps {
     onTranscriptionComplete?: (transcribedText: string) => void;
+    onEditEvent?: (transcribedText: string) => void;
+    onDeleteEvent?: (transcribedText: string) => void;
+    onConsultEvents?: (transcribedText: string) => void;
 }
 
-const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete }) => {
+const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
+    onTranscriptionComplete,
+    onEditEvent,
+    onDeleteEvent,
+    onConsultEvents
+}) => {
     const {
         // transcript,
         listening,
@@ -16,62 +24,110 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         finalTranscript
     } = useSpeechRecognition();
 
-    // type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
-    
+    type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
+
     const [isClient, setIsClient] = useState(false);
     const lastTranscriptRef = useRef('');
+
 
     useEffect(() => {
         setIsClient(true);
     }, []);
-    
-    // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
-    // const commandKeywords: Record<CommandKey, string[]> = {
-    //     agregar: ["agregar", "agrega", "añadir", "adicionar"],
-    //     editar: ["editar", "modificar", "cambiar"],
-    //     eliminar: ["eliminar", "borrar", "quitar"],
-    //     consultar: ["consultar", "buscar", "ver"],
-    //     "cerrar menú": ["cerrar menú", "cierra el menú", "ocultar menú"],
-    //     reiniciar: ["reiniciar", "limpiar", "resetear"],
-    //     "parar escucha": ["parar escucha", "detener escucha", "stop"]
-    // };
 
-    // // Mapeo de funciones para cada comando
-    // const commands: Record<CommandKey, () => void> = {
-    //     agregar: () => alert("Comando detectado: Agregar"),
-    //     editar: () => alert("Comando detectado: Editar"),
-    //     eliminar: () => alert("Comando detectado: Eliminar"),
-    //     consultar: () => alert("Comando detectado: Consultar"),
-    //     "cerrar menú": () => alert("Comando detectado: Cerrar menú"),
-    //     reiniciar: resetTranscript,
-    //     "parar escucha": () => handleStopListening()
-    // };
+    // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
+    const commandKeywords: Record<CommandKey, string[]> = {
+        agregar: ["agregar", "agrega", "añadir", "adicionar"],
+        editar: ["editar", "modificar", "cambiar"],
+        eliminar: ["eliminar", "borrar", "quitar"],
+        consultar: ["consultar", "buscar", "ver"],
+        "cerrar menú": ["cerrar menú", "cierra el menú", "ocultar menú"],
+        reiniciar: ["reiniciar", "limpiar", "resetear"],
+        "parar escucha": ["parar escucha", "detener escucha", "stop"]
+    };
+
+    // Mapeo de funciones para cada comando
+    const commands: Record<CommandKey, () => Promise<void>> = {
+        agregar: async () => {
+          if (onTranscriptionComplete) {
+            await onTranscriptionComplete(finalTranscript);
+            resetTranscript();
+          }
+        },
+        editar: async () => {
+          if (onEditEvent) {
+            await onEditEvent(finalTranscript);
+            resetTranscript();
+          }
+        },
+        eliminar: async () => {
+          if (onDeleteEvent) {
+            await onDeleteEvent(finalTranscript);
+            resetTranscript();
+          }
+        },
+        consultar: async () => {
+          console.log("Consultar")
+          if (onConsultEvents) {
+            await onConsultEvents(finalTranscript);
+            resetTranscript();
+          }
+        },
+        "cerrar menú": async () => {
+          // Implementar si es necesario
+          alert("Comando detectado: Cerrar menú");
+          resetTranscript();
+        },
+        reiniciar: async () => {
+          resetTranscript();
+        },
+        "parar escucha": async () => {
+          handleStopListening();
+          resetTranscript();
+        }
+      };
+      
 
     const handleButtonClick = () => {
         if (listening) {
             handleStopListening();
         } else {
             // resetTranscript();
-            SpeechRecognition.startListening({ language: 'es-EC', continuous: true });
+            SpeechRecognition.startListening({ language: 'es-EC', continuous: true, interimResults: false });
         }
     };
 
-    
+
     const handleStopListening = () => {
         SpeechRecognition.stopListening();
     };
-    
+
     useEffect(() => {
         if (finalTranscript !== '' && finalTranscript !== lastTranscriptRef.current) {
-            lastTranscriptRef.current = finalTranscript;
-            if (onTranscriptionComplete) {
-                onTranscriptionComplete(finalTranscript);
-                console.log(finalTranscript)
+          lastTranscriptRef.current = finalTranscript;
+          const lowerTranscript = finalTranscript.toLowerCase();
+          let commandFound = false;
+      
+          (async () => {
+            for (const [command, keywords] of Object.entries(commandKeywords)) {
+              for (const keyword of keywords) {
+                if (lowerTranscript.includes(keyword)) {
+                  await commands[command as CommandKey]();
+                  commandFound = true;
+                  break;
+                }
+              }
+              if (commandFound) break;
             }
-            resetTranscript();
+      
+            if (!commandFound && onTranscriptionComplete) {
+              await onTranscriptionComplete(finalTranscript);
+              resetTranscript();
+            }
+          })();
         }
-    }, [finalTranscript, onTranscriptionComplete, resetTranscript]);
-    
+      }, [finalTranscript, commandKeywords, commands, onTranscriptionComplete, onEditEvent, onDeleteEvent, onConsultEvents, resetTranscript]);
+      
+
     // Efecto para verificar comandos en la transcripción en tiempo real
     // useEffect(() => {
     //     // Verificar y ejecutar comandos
@@ -102,12 +158,12 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({ onTranscriptionComplete
         <div>
             <button
                 onClick={handleButtonClick}
-                className={`p-4 rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${listening  ? 'bg-[#e8d3d3] border-[#2F0000]' : 'bg-gray-300 border-black'
+                className={`p-4 rounded-lg shadow-lg transition duration-300 border-dashed border-2 ${listening ? 'bg-[#e8d3d3] border-[#2F0000]' : 'bg-gray-300 border-black'
                     }`}
-                title={listening  ? 'Detener escucha' : 'Iniciar escucha'}
+                title={listening ? 'Detener escucha' : 'Iniciar escucha'}
             >
                 <Image
-                    src={listening  ? "/icons/mic_white.png" : "/icons/mic.png"}
+                    src={listening ? "/icons/mic_white.png" : "/icons/mic.png"}
                     alt="mic icon"
                     width={50}
                     height={50}

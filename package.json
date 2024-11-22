@@ -8,9 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
+    "@mui/material": "^6.1.7",
     "@react-oauth/google": "^0.12.1",
     "ai": "^2.1.29",
     "date-fns": "^4.1.0",
@@ -21,6 +24,7 @@
     "next-auth": "^4.24.10",
     "openai-edge": "^1.2.2",
     "react": "^18",
+    "react-data-table-component": "^7.6.2",
     "react-dom": "^18",
     "react-helmet": "^6.1.0",
     "react-helmet-async": "^2.0.5",
@@ -28,6 +32,7 @@
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",
     "remixicon": "^4.5.0",
+    "styled-components": "^6.1.13",
     "swiper": "^11.1.14"
   },
   "devDependencies": {

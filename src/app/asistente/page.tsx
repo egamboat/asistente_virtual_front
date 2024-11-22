@@ -4,7 +4,13 @@ import Reloj from "@/components/reloj/reloj";
 import React, { useEffect, useState } from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
-
+import {
+  // handleCreateEvent,
+  handleEditEvent,
+  handleDeleteEvent,
+  handleConsultEvents,
+} from "@/utils/servicios"
+import { customFetch } from '@/components/refresh_token';
 interface ProcessedContent {
   userMessage: string;
   // eslint-disable-next-line
@@ -14,61 +20,105 @@ interface ProcessedContent {
 
 const Home: React.FC = () => {
   const [processedJson, setProcessedJson] = useState(null);
-  const { messages,append} = useChat();
+  const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
-  
-  console.log("isComplete:", isComplete)
-  console.log("processedJson:", processedJson)
-  console.log("Mensaje index:", messages)
 
-  const handleTranscriptionComplete = (transcribedText: string) => {
+  const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       console.log("Transcripción completada:", transcribedText);
-      append({ role: 'user', content: transcribedText });
+      await append({ role: 'user', content: transcribedText });
       console.log("Mensajes después de append:", messages);
     }
   };
 
   const handleDataSend = (data: any) => {
-    console.log("Llegó:", data)
-    // fetch('/api/saveEvent', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log('Éxito:', data);
-    //     // Opcional: Proporcionar retroalimentación al usuario o actualizar el estado
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error:', error);
-    //   });
+    
+    if (!data.fecha_fin || data.fecha_fin.trim() === '') {
+      data.fecha_fin = data.fecha_inicio;
+    }
+    async function sendDataToBackend() {
+      const url = 'http://localhost:8000/asistente/api/eventos/';
+
+      try {
+        const response = await customFetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Respuesta del backend:', data);
+          alert('Datos enviados con éxito');
+        } else {
+          const errorData = await response.json();
+          console.error('Error del backend:', errorData);
+          alert('Error al enviar los datos al backend');
+        }
+      } catch (error) {
+        console.error('Error al realizar la solicitud:', error);
+        alert('Hubo un error al conectar con el backend');
+      }
+    }
+
+    sendDataToBackend();
   };
 
-  // Función para procesar el contenido del mensaje de la API
+  const handleCommandWrapper = async (
+    transcribedText: string,
+    handler: (message: any, append: (msg: any) => Promise<void>) => Promise<void>
+  ) => {
+    try {
+      // Agregar el mensaje del usuario al chat
+      await append({ role: 'user', content: transcribedText });
+
+      const message = {
+        role: "user" as const,
+        content: transcribedText,
+      };
+      await handler(message, async (msg) => {
+        await append(msg); // Agregar la respuesta del asistente
+      });
+    } catch (error) {
+      console.error("Error en handleCommandWrapper:", error);
+    }
+  };
+
+  const handleEditEventWrapper = async (transcribedText: string) => {
+    await handleCommandWrapper(transcribedText, handleEditEvent);
+  };
+
+  const handleDeleteEventWrapper = async (transcribedText: string) => {
+    await handleCommandWrapper(transcribedText, handleDeleteEvent);
+  };
+
+  const handleConsultEventsWrapper = async (transcribedText: string) => {
+    await handleCommandWrapper(transcribedText, handleConsultEvents);
+  };
+
+
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
     try {
+      // Utilizar una expresión regular para extraer el JSON
+      const jsonMatch = messageContent.match(/\{[\s\S]*?\}/);
+      if (jsonMatch) {
+        const jsonPart = jsonMatch[0];
+        const parsedJson = JSON.parse(jsonPart);
+        const isComplete = parsedJson.completo;
 
-      const jsonStart = messageContent.indexOf("JSON:");
-      const jsonEnd = messageContent.indexOf("}", jsonStart) + 1;
-      const jsonPart = messageContent.slice(jsonStart + 5, jsonEnd).trim();
-      const parsedJson = JSON.parse(jsonPart);
+        // Obtener el resto del mensaje después del JSON
+        const userMessage = messageContent.slice(jsonMatch.index! + jsonPart.length).trim();
 
-      const userMessageStart = messageContent.indexOf("Respuesta al usuario:") + 22;
-      const userMessage = messageContent.slice(userMessageStart).trim();
-
-      const isComplete = parsedJson.completo;
-
-      // Retornar los datos procesados sin actualizar el estado
-      return { json: parsedJson, userMessage, isComplete };
+        return { json: parsedJson, userMessage, isComplete };
+      } else {
+        // No se encontró JSON, devolver todo el mensaje como userMessage
+        return { userMessage: messageContent, isComplete: false };
+      }
     } catch (error) {
       console.error("Error procesando el mensaje del asistente:", error);
       return { userMessage: messageContent, isComplete: false };
     }
   };
+
 
   useEffect(() => {
     const assistantMessages = messages.filter((m) => m.role === "assistant");
@@ -83,11 +133,10 @@ const Home: React.FC = () => {
         const dataSend = {
           // id: processedContent.json.id,
           // agendaId: processedContent.json.agendaId,
-          titulo: processedContent.json.titulo,
-          tipoEventoId: processedContent.json.tipoEventoId,
           descripcion: processedContent.json.descripcion,
-          fechaInicio: processedContent.json.fechaInicio,
-          fechaFin: processedContent.json.fechaFin,
+          fecha_inicio: processedContent.json.fecha_inicio,
+          fecha_fin: processedContent.json.fecha_fin,
+          tipo_evento: processedContent.json.tipo_evento,
           modalidad: processedContent.json.modalidad,
           // completo: processedContent.json.completo,
         };
@@ -97,6 +146,7 @@ const Home: React.FC = () => {
   }, [messages]);
 
 
+  console.log("Esta completo:", isComplete)
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -122,36 +172,6 @@ const Home: React.FC = () => {
               ¿Ocupado? ¡Te ayudo!
             </div>
           </div>
-
-          {/* Chat messages */}
-          {/* <div className="text-white">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex ${m.role === "assistant" ? "justify-start" : "justify-end"} mb-2`}
-              >
-                <div
-                  className={`max-w-[75%] p-2 rounded-md ${m.role === "assistant"
-                    ? "bg-gray-800"
-                    : "bg-[#D9D9D9]"
-                    }`}
-                >
-                  <span
-                    className={`text-xs block ${m.role === "assistant" ? "text-right" : "text-left"
-                      }`}
-                  >
-                    {m.role === "assistant" ? "Nomi" : "Tú"}
-                  </span>
-                  <div className={`mt-1 ${m.role === "assistant" ? "text-white" : "text-black"
-                    }`}>
-                    {m.content}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
-          {/* Renderizar los mensajes del chat */}
-
           <div className="text-white">
             {messages.map((m) => {
               const isAssistant = m.role === "assistant";
@@ -169,14 +189,10 @@ const Home: React.FC = () => {
                     </span>
                     <div className={`mt-1 ${isAssistant ? "text-white" : "text-black"}`}>
                       <p>{processedContent.userMessage}</p>
-                      {processedContent.json && (
-                        <pre className="bg-gray-700 p-2 rounded-md text-xs mt-2">
-                          {JSON.stringify(processedContent.json, null, 2)}
-                        </pre>
-                      )}
                     </div>
                   </div>
                 </div>
+
               );
             })}
 
@@ -184,7 +200,25 @@ const Home: React.FC = () => {
         </div>
       </div>
       <div className="flex justify-center items-center my-4">
-        <MicrofonoBoton onTranscriptionComplete={handleTranscriptionComplete} />
+        <MicrofonoBoton
+          onTranscriptionComplete={handleTranscriptionComplete}
+          onEditEvent={(transcribedText: string) => {
+            handleEditEventWrapper(transcribedText)
+              .then(() => console.log("Edición completada"))
+              .catch((err) => console.error("Error en edición:", err));
+          }}
+          onDeleteEvent={(transcribedText: string) => {
+            handleDeleteEventWrapper(transcribedText)
+              .then(() => console.log("Eliminación completada"))
+              .catch((err) => console.error("Error en eliminación:", err));
+          }}
+          onConsultEvents={(transcribedText: string) => {
+            handleConsultEventsWrapper(transcribedText)
+              .then(() => console.log("Consulta completada"))
+              .catch((err) => console.error("Error en consulta:", err));
+          }}
+        />
+
       </div>
     </div >
   );

@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     );
     return response;
   }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function verify(body: any) {
+    console.log("body:", body)
     const ticket = await client.verifyIdToken({
       idToken: body.token,
       audience: CLIENT_ID,
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
   try {
     const payload = await verify(body).catch(console.error);
     return NextResponse.json(payload);
+
   } catch (error) {
     const response = NextResponse.json(
       {
