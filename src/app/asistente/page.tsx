@@ -10,6 +10,7 @@ import {
   handleDeleteEvent,
   handleConsultEvents,
 } from "@/utils/servicios"
+import { customFetch } from '@/components/refresh_token';
 interface ProcessedContent {
   userMessage: string;
   // eslint-disable-next-line
@@ -31,22 +32,35 @@ const Home: React.FC = () => {
   };
 
   const handleDataSend = (data: any) => {
-    console.log("Llegó:", data)
-    // fetch('/api/saveEvent', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log('Éxito:', data);
-    //     // Opcional: Proporcionar retroalimentación al usuario o actualizar el estado
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error:', error);
-    //   });
+    
+    if (!data.fecha_fin || data.fecha_fin.trim() === '') {
+      data.fecha_fin = data.fecha_inicio;
+    }
+    async function sendDataToBackend() {
+      const url = 'http://localhost:8000/asistente/api/eventos/';
+
+      try {
+        const response = await customFetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Respuesta del backend:', data);
+          alert('Datos enviados con éxito');
+        } else {
+          const errorData = await response.json();
+          console.error('Error del backend:', errorData);
+          alert('Error al enviar los datos al backend');
+        }
+      } catch (error) {
+        console.error('Error al realizar la solicitud:', error);
+        alert('Hubo un error al conectar con el backend');
+      }
+    }
+
+    sendDataToBackend();
   };
 
   const handleCommandWrapper = async (
@@ -82,27 +96,29 @@ const Home: React.FC = () => {
   };
 
 
-  // Función para procesar el contenido del mensaje de la API
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
     try {
+      // Utilizar una expresión regular para extraer el JSON
+      const jsonMatch = messageContent.match(/\{[\s\S]*?\}/);
+      if (jsonMatch) {
+        const jsonPart = jsonMatch[0];
+        const parsedJson = JSON.parse(jsonPart);
+        const isComplete = parsedJson.completo;
 
-      const jsonStart = messageContent.indexOf("JSON:");
-      const jsonEnd = messageContent.indexOf("}", jsonStart) + 1;
-      const jsonPart = messageContent.slice(jsonStart + 5, jsonEnd).trim();
-      const parsedJson = JSON.parse(jsonPart);
+        // Obtener el resto del mensaje después del JSON
+        const userMessage = messageContent.slice(jsonMatch.index! + jsonPart.length).trim();
 
-      const userMessageStart = messageContent.indexOf("Respuesta al usuario:") + 22;
-      const userMessage = messageContent.slice(userMessageStart).trim();
-
-      const isComplete = parsedJson.completo;
-
-      // Retornar los datos procesados sin actualizar el estado
-      return { json: parsedJson, userMessage, isComplete };
+        return { json: parsedJson, userMessage, isComplete };
+      } else {
+        // No se encontró JSON, devolver todo el mensaje como userMessage
+        return { userMessage: messageContent, isComplete: false };
+      }
     } catch (error) {
-      // console.error("Error procesando el mensaje del asistente:", error);
+      console.error("Error procesando el mensaje del asistente:", error);
       return { userMessage: messageContent, isComplete: false };
     }
   };
+
 
   useEffect(() => {
     const assistantMessages = messages.filter((m) => m.role === "assistant");
@@ -117,11 +133,10 @@ const Home: React.FC = () => {
         const dataSend = {
           // id: processedContent.json.id,
           // agendaId: processedContent.json.agendaId,
-          titulo: processedContent.json.titulo,
-          tipoEventoId: processedContent.json.tipoEventoId,
           descripcion: processedContent.json.descripcion,
-          fechaInicio: processedContent.json.fechaInicio,
-          fechaFin: processedContent.json.fechaFin,
+          fecha_inicio: processedContent.json.fecha_inicio,
+          fecha_fin: processedContent.json.fecha_fin,
+          tipo_evento: processedContent.json.tipo_evento,
           modalidad: processedContent.json.modalidad,
           // completo: processedContent.json.completo,
         };
@@ -131,6 +146,7 @@ const Home: React.FC = () => {
   }, [messages]);
 
 
+  console.log("Esta completo:", isComplete)
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -173,14 +189,10 @@ const Home: React.FC = () => {
                     </span>
                     <div className={`mt-1 ${isAssistant ? "text-white" : "text-black"}`}>
                       <p>{processedContent.userMessage}</p>
-                      {/* {processedContent.json && (
-                        <pre className="bg-gray-700 p-2 rounded-md text-xs mt-2">
-                          {JSON.stringify(processedContent.json, null, 2)}
-                        </pre>
-                      )} */}
                     </div>
                   </div>
                 </div>
+
               );
             })}
 

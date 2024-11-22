@@ -23,10 +23,10 @@ const Perfil = () => {
     async function sendDataToBackend() {
       const url = 'http://localhost:8000/asistente/api/eventos/';
       const payload = {
-        descripcion: "Esta es una prueba enviando solo la modalidad ID",
+        descripcion: "Prueba sin enviar id de la agenda",
         fecha_inicio: "2024-11-20T22:00:00",
         fecha_fin: "2024-11-21T22:00:00",
-        agenda: 2,
+        // agenda: 2,
         tipo_evento: 1,
         modalidad: 2,
       };
@@ -88,9 +88,9 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-            {/* <button onClick={fetchProtectedData}>
-                Fetch Protected Data
-            </button> */}
+          <button onClick={sendDataToBackend}>
+               Send Data
+            </button> 
             
             <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
