@@ -11,6 +11,8 @@ import {
   handleConsultEvents,
 } from "@/utils/servicios"
 import { customFetch } from '@/components/refresh_token';
+import { toast } from 'react-toastify';
+
 interface ProcessedContent {
   userMessage: string;
   // eslint-disable-next-line
@@ -32,7 +34,7 @@ const Home: React.FC = () => {
   };
 
   const handleDataSend = (data: any) => {
-    
+
     if (!data.fecha_fin || data.fecha_fin.trim() === '') {
       data.fecha_fin = data.fecha_inicio;
     }
@@ -48,15 +50,15 @@ const Home: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           console.log('Respuesta del backend:', data);
-          alert('Datos enviados con éxito');
+          toast.success('Reunión agendada con éxito')
         } else {
           const errorData = await response.json();
           console.error('Error del backend:', errorData);
-          alert('Error al enviar los datos al backend');
+          toast.error('Error al enviar los datos al backend')
         }
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
-        alert('Hubo un error al conectar con el backend');
+        toast.error('Hubo un error al conectar con el backend')
       }
     }
 
@@ -68,7 +70,6 @@ const Home: React.FC = () => {
     handler: (message: any, append: (msg: any) => Promise<void>) => Promise<void>
   ) => {
     try {
-      // Agregar el mensaje del usuario al chat
       await append({ role: 'user', content: transcribedText });
 
       const message = {
@@ -76,7 +77,7 @@ const Home: React.FC = () => {
         content: transcribedText,
       };
       await handler(message, async (msg) => {
-        await append(msg); // Agregar la respuesta del asistente
+        await append(msg);
       });
     } catch (error) {
       console.error("Error en handleCommandWrapper:", error);

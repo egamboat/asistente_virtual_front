@@ -5,9 +5,32 @@ import { UserData } from "@/interfaces/userInterface";
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useEffect, useState } from "react";
 import { customFetch } from "@/components/refresh_token";
+import { toast } from "react-toastify";
+import ModalAyuda from "./modal_ayuda";
 
 const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        // Aquí puedes agregar la lógica de validación
+        const canOpenModal = true; // Cambia esta condición según tu lógica
+        if (canOpenModal) {
+            setIsModalOpen(true);
+        } else {
+            toast.error('No puedes abrir el modal en este momento.');
+        }
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleEnviarAyuda = () => {
+        // Aquí puedes agregar la lógica que se ejecutará al presionar "Enviar"
+        toast.success('¡Solicitud de ayuda enviada con éxito!');
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
@@ -19,40 +42,40 @@ const Perfil = () => {
         }
     }, []);
 
-  
-    async function sendDataToBackend() {
-      const url = 'http://localhost:8000/asistente/api/eventos/';
-      const payload = {
-        descripcion: "Prueba sin enviar id de la agenda",
-        fecha_inicio: "2024-11-20T22:00:00",
-        fecha_fin: "2024-11-21T22:00:00",
-        // agenda: 2,
-        tipo_evento: 1,
-        modalidad: 2,
-      };
-    
-      try {
-        const response = await customFetch(url, {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-    
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Respuesta del backend:', data);
-          alert('Datos enviados con éxito');
-        } else {
-          const errorData = await response.json();
-          console.error('Error del backend:', errorData);
-          alert('Error al enviar los datos al backend');
-        }
-      } catch (error) {
-        console.error('Error al realizar la solicitud:', error);
-        alert('Hubo un error al conectar con el backend');
-      }
-    }
-    
-    
+
+    // async function sendDataToBackend() {
+    //     const url = 'http://localhost:8000/asistente/api/eventos/';
+    //     const payload = {
+    //         descripcion: "Prueba sin enviar id de la agenda",
+    //         fecha_inicio: "2024-11-20T22:00:00",
+    //         fecha_fin: "2024-11-21T22:00:00",
+    //         // agenda: 2,
+    //         tipo_evento: 1,
+    //         modalidad: 2,
+    //     };
+
+    //     try {
+    //         const response = await customFetch(url, {
+    //             method: 'POST',
+    //             body: JSON.stringify(payload),
+    //         });
+
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log('Respuesta del backend:', data);
+    //             alert('Datos enviados con éxito');
+    //         } else {
+    //             const errorData = await response.json();
+    //             console.error('Error del backend:', errorData);
+    //             alert('Error al enviar los datos al backend');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error al realizar la solicitud:', error);
+    //         alert('Hubo un error al conectar con el backend');
+    //     }
+    // }
+
+
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -75,8 +98,8 @@ const Perfil = () => {
                     <h3 className="text-lg font-bold my-2">Tus datos:</h3>
                     <p>Email: {storedData && storedData.name ? `${storedData.email}` : ""} </p>
                     <p>Institución: {Usuario.docente.facultad}</p>
-                    <p>Miembro desde: {Usuario.fechaIngreso}</p>
-                    <p>Usos: Haz usado el asistente 10 veces</p>
+                    {/* <p>Miembro desde: {Usuario.fechaIngreso}</p> */}
+                    {/* <p>Usos: Haz usado el asistente 10 veces</p> */}
                 </div>
 
                 <div className="my-2 p-2">
@@ -84,20 +107,26 @@ const Perfil = () => {
                     <div className="flex justify-between space-x-2">
                         <button className="bg-white py-2 px-4 rounded-lg">Borrar Cuenta</button>
                         {/* <button className="bg-white py-2 px-4 rounded">Restablecer Contraseña</button> */}
-                        <button className="bg-white py-2 px-4 rounded-lg">Solicitar Ayuda</button>
+                        <button onClick={handleOpenModal} className="bg-white py-2 px-4 rounded-lg">Solicitar Ayuda</button>
                     </div>
                 </div>
             </div>
-          <button onClick={sendDataToBackend}>
+            {/* <button onClick={sendDataToBackend}>
                Send Data
-            </button> 
-            
+            </button>  */}
+
             <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div>
-
-
+            {isModalOpen && (
+                <ModalAyuda
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onEnviar={handleEnviarAyuda}
+                />
+            )}
         </div >
+
     );
 }
 

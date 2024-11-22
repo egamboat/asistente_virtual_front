@@ -39,7 +39,7 @@ const Agenda: React.FC = () => {
 
         fetchEvents();
     }, []);
-    console.log("Eventos", dataEvent)
+    // console.log("Eventos", dataEvent)
 
     const formatDate = (dateString: string | Date) => {
         if (typeof dateString === "string") {

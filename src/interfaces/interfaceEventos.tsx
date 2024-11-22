@@ -1,10 +1,9 @@
 export interface Evento {
-  id: string;
-  titulo: string;
-  agendaId: string;
-  tipoEventoId: string;
+  id: number;
+  modalidad_descripcion: string;
   descripcion: string;
-  fechaInicio: string;
-  fechaFin: string;
-  modalidad: string;
-};
+  fecha_inicio: string;
+  fecha_fin: string | null;
+  tipo_evento: number;
+  modalidad: number;
+}
