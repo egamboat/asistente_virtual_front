@@ -119,8 +119,8 @@ const Agenda: React.FC = () => {
     };
 
     return (
-        <div className="h-fulll bg-white flex flex-col justify-between">
-            <div className="flex justify-between w-full mt-4">
+        <div className="h-full bg-white flex flex-col justify-between">
+            <div className="flex justify-between mt-4">
                 <div className="ml-4">
                     <h1 className="text-3xl font-bold">
                         Agenda
@@ -131,7 +131,6 @@ const Agenda: React.FC = () => {
                 </div>
             </div>
 
-
             <div className="overflow-x-auto p-4 mt-8 md:mt-26">
                 <div className="overflow-x-auto p-4 mt-8 md:mt-26">
                     <DataTable
@@ -141,12 +140,9 @@ const Agenda: React.FC = () => {
                         noDataComponent="No hay eventos disponibles."
                         pagination
                         paginationComponentOptions={paginationOptions}
-                        
                     />
                 </div>
-
             </div>
-
 
             <div className="flex justify-center items-center">
                 <MicrofonoBoton />

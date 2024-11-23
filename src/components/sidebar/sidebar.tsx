@@ -5,6 +5,7 @@ import { googleLogout } from "@react-oauth/google";
 import { UserData } from "@/interfaces/userInterface";
 import { Menu, X, Home, Calendar, BookOpen, User, LogOut } from 'lucide-react';
 import { useRouter } from "next/navigation"; // Importamos el router de Next.js
+import Image from "next/image";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -47,7 +48,7 @@ const Sidebar = () => {
       if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
         localStorage.removeItem('userData');
         setStoredData(null);
-        
+
         router.push('/');
       }
     } catch (error) {
@@ -88,7 +89,13 @@ const Sidebar = () => {
         <div className={`bg-[#234AB7] text-white h-screen w-64 p-6 shadow-lg`}>
           {/* Logo */}
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold">Nomi</h2>
+            <Image
+              src="/logo_blanco.png"
+              width={100}
+              height={50}
+              alt="Nomi Logo"
+            />
+            {/* <h2 className="text-xl font-bold">Nomi</h2> */}
           </div>
 
           {/* Navegación */}

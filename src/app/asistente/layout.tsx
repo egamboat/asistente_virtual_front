@@ -17,7 +17,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <div className={`flex h-full font-segoe-ui antialiased ${inter.className}`}>
+      <div className={`flex min-h-screen font-segoe-ui antialiased ${inter.className}`}>
           <Sidebar />
           <div className="flex-1 transition-all duration-300">
             <div className="p-4 mx-2 mt-6 md:m-6">

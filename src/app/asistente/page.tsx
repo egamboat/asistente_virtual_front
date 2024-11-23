@@ -24,7 +24,7 @@ const Home: React.FC = () => {
   const [processedJson, setProcessedJson] = useState(null);
   const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
-
+  const [dataSent, setDataSent] = useState(false);
   const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       console.log("Transcripción completada:", transcribedText);
@@ -130,7 +130,7 @@ const Home: React.FC = () => {
       setProcessedJson(processedContent.json);
       setIsComplete(processedContent.isComplete);
 
-      if (processedContent.isComplete && processedContent.json) {
+      if (processedContent.isComplete && processedContent.json && !dataSent) {
         const dataSend = {
           // id: processedContent.json.id,
           // agendaId: processedContent.json.agendaId,
@@ -142,12 +142,12 @@ const Home: React.FC = () => {
           // completo: processedContent.json.completo,
         };
         handleDataSend(dataSend);
+        setDataSent(true);
       }
     }
   }, [messages]);
 
 
-  console.log("Esta completo:", isComplete)
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -181,7 +181,6 @@ const Home: React.FC = () => {
                 : { userMessage: m.content, isComplete: false };
 
 
-              // Ahora TypeScript reconoce las propiedades opcionales
               return (
                 <div key={m.id} className={`flex ${isAssistant ? "justify-start" : "justify-end"} mb-2`}>
                   <div className={`max-w-[75%] p-2 rounded-md ${isAssistant ? "bg-gray-800" : "bg-[#D9D9D9]"}`}>
@@ -200,24 +199,10 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+
       <div className="flex justify-center items-center my-4">
         <MicrofonoBoton
           onTranscriptionComplete={handleTranscriptionComplete}
-          onEditEvent={(transcribedText: string) => {
-            handleEditEventWrapper(transcribedText)
-              .then(() => console.log("Edición completada"))
-              .catch((err) => console.error("Error en edición:", err));
-          }}
-          onDeleteEvent={(transcribedText: string) => {
-            handleDeleteEventWrapper(transcribedText)
-              .then(() => console.log("Eliminación completada"))
-              .catch((err) => console.error("Error en eliminación:", err));
-          }}
-          onConsultEvents={(transcribedText: string) => {
-            handleConsultEventsWrapper(transcribedText)
-              .then(() => console.log("Consulta completada"))
-              .catch((err) => console.error("Error en consulta:", err));
-          }}
         />
 
       </div>
