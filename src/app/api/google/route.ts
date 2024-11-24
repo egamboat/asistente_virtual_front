@@ -1,4 +1,4 @@
-import { CLIENT_ID } from "@/consts/clientId";
+import { CLIENT_ID } from "@/utils/clientId";
 import { OAuth2Client } from "google-auth-library";
 import { NextResponse } from "next/server";
 

@@ -1,7 +1,7 @@
 "use client";
 import 'regenerator-runtime/runtime';
 import Login from "@/components/Login";
-import { CLIENT_ID } from "@/consts/clientId";
+import { CLIENT_ID } from "@/utils/clientId";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, Users, BookOpen, Menu, X } from 'lucide-react';
