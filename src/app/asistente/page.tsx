@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
 import {
-  // handleCreateEvent,
   handleEditEvent,
   handleDeleteEvent,
   handleConsultEvents,
@@ -15,25 +14,27 @@ import { toast } from 'react-toastify';
 
 interface ProcessedContent {
   userMessage: string;
-  // eslint-disable-next-line
   json?: any;
   isComplete: boolean;
 }
 
 const Home: React.FC = () => {
-  const [processedJson, setProcessedJson] = useState(null);
+  const [processedJson, setProcessedJson] = useState<Event>();
   const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
   const [dataSent, setDataSent] = useState(false);
+
   const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
       console.log("Transcripción completada:", transcribedText);
+      setDataSent(false);
+
       await append({ role: 'user', content: transcribedText });
       console.log("Mensajes después de append:", messages);
     }
   };
 
-  const handleDataSend = (data: any) => {
+  const handleDataSend = async (data: any) => {
 
     if (!data.fecha_fin || data.fecha_fin.trim() === '') {
       data.fecha_fin = data.fecha_inicio;
@@ -58,7 +59,7 @@ const Home: React.FC = () => {
         }
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
-        toast.error('Hubo un error al conectar con el backend')
+        toast.error('Ocurrió un error al realizar la solicitud.')
       }
     }
 
@@ -84,34 +85,19 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleEditEventWrapper = async (transcribedText: string) => {
-    await handleCommandWrapper(transcribedText, handleEditEvent);
-  };
-
-  const handleDeleteEventWrapper = async (transcribedText: string) => {
-    await handleCommandWrapper(transcribedText, handleDeleteEvent);
-  };
-
-  const handleConsultEventsWrapper = async (transcribedText: string) => {
-    await handleCommandWrapper(transcribedText, handleConsultEvents);
-  };
-
 
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
     try {
-      // Utilizar una expresión regular para extraer el JSON
+
       const jsonMatch = messageContent.match(/\{[\s\S]*?\}/);
       if (jsonMatch) {
         const jsonPart = jsonMatch[0];
         const parsedJson = JSON.parse(jsonPart);
         const isComplete = parsedJson.completo;
-
-        // Obtener el resto del mensaje después del JSON
         const userMessage = messageContent.slice(jsonMatch.index! + jsonPart.length).trim();
 
         return { json: parsedJson, userMessage, isComplete };
       } else {
-        // No se encontró JSON, devolver todo el mensaje como userMessage
         return { userMessage: messageContent, isComplete: false };
       }
     } catch (error) {
@@ -126,29 +112,25 @@ const Home: React.FC = () => {
     if (assistantMessages.length > 0) {
       const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
       const processedContent = processAssistantMessage(lastAssistantMessage.content);
-
+  
       setProcessedJson(processedContent.json);
       setIsComplete(processedContent.isComplete);
-
+  
       if (processedContent.isComplete && processedContent.json && !dataSent) {
         const dataSend = {
-          // id: processedContent.json.id,
-          // agendaId: processedContent.json.agendaId,
           descripcion: processedContent.json.descripcion,
           fecha_inicio: processedContent.json.fecha_inicio,
           fecha_fin: processedContent.json.fecha_fin,
           tipo_evento: processedContent.json.tipo_evento,
           modalidad: processedContent.json.modalidad,
-          // completo: processedContent.json.completo,
         };
         handleDataSend(dataSend);
-        setDataSent(true);
+          setDataSent(true);
       }
     }
   }, [messages]);
-
-
-
+  
+  
   return (
     <div className="h-full bg-white flex flex-col justify-between">
       <div className="flex justify-between w-full mt-4">
@@ -180,7 +162,6 @@ const Home: React.FC = () => {
                 ? processAssistantMessage(m.content)
                 : { userMessage: m.content, isComplete: false };
 
-
               return (
                 <div key={m.id} className={`flex ${isAssistant ? "justify-start" : "justify-end"} mb-2`}>
                   <div className={`max-w-[75%] p-2 rounded-md ${isAssistant ? "bg-gray-800" : "bg-[#D9D9D9]"}`}>
@@ -192,10 +173,10 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
               );
             })}
 
+         
           </div>
         </div>
       </div>
@@ -203,6 +184,7 @@ const Home: React.FC = () => {
       <div className="flex justify-center items-center my-4">
         <MicrofonoBoton
           onTranscriptionComplete={handleTranscriptionComplete}
+          DataEnviada={setDataSent}
         />
 
       </div>

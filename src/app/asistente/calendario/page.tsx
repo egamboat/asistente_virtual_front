@@ -99,9 +99,9 @@ const Calendario: FC = () => {
           />
         </div>
       </div>
-      <div className="flex justify-center items-center">
+      {/* <div className="flex justify-center items-center">
         <MicrofonoBoton />
-      </div>
+      </div> */}
     </div>
   );
 };

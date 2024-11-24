@@ -42,6 +42,10 @@ const Sidebar = () => {
     setIsOpen(!isOpen);
   };
 
+  const clearMessages = () => {
+    localStorage.removeItem('assistantMessages');
+  };
+
   const logOut = () => {
     try {
       googleLogout();
@@ -50,11 +54,13 @@ const Sidebar = () => {
         setStoredData(null);
 
         router.push('/');
+        clearMessages()
       }
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
+
 
   const menuItems = [
     { href: "/asistente/", label: "Inicio", icon: <Home size={20} /> },
@@ -138,9 +144,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
       <main className={`transition-all duration-300 ${isOpen ? 'ml-64' : 'ml-0'}`}>
-        {/* Aquí va el contenido de tu página */}
       </main>
     </div>
   );

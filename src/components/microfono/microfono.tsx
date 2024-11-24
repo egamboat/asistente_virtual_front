@@ -5,26 +5,21 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 import Image from 'next/image';
 interface MicrofonoBotonProps {
     onTranscriptionComplete?: (transcribedText: string) => void;
-    onEditEvent?: (transcribedText: string) => void;
-    onDeleteEvent?: (transcribedText: string) => void;
-    onConsultEvents?: (transcribedText: string) => void;
+    DataEnviada: (value: boolean ) => void;
 }
 
 const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
     onTranscriptionComplete,
-    onEditEvent,
-    onDeleteEvent,
-    onConsultEvents
+    DataEnviada,
 }) => {
     const {
-        // transcript,
         listening,
         resetTranscript,
         browserSupportsSpeechRecognition,
         finalTranscript
     } = useSpeechRecognition();
 
-    type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'cerrar menú' | 'reiniciar' | 'parar escucha';
+    type CommandKey = 'agregar' | 'editar' | 'eliminar' | 'consultar' | 'reiniciar' | 'parar escucha';
 
     const [isClient, setIsClient] = useState(false);
     const lastTranscriptRef = useRef('');
@@ -40,7 +35,6 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
         editar: ["editar", "modificar", "cambiar"],
         eliminar: ["eliminar", "borrar", "quitar"],
         consultar: ["consultar", "buscar", "ver"],
-        "cerrar menú": ["cerrar menú", "cierra el menú", "ocultar menú"],
         reiniciar: ["reiniciar", "limpiar", "resetear"],
         "parar escucha": ["parar escucha", "detener escucha", "stop"]
     };
@@ -54,28 +48,10 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
           }
         },
         editar: async () => {
-          if (onEditEvent) {
-            await onEditEvent(finalTranscript);
-            resetTranscript();
-          }
         },
         eliminar: async () => {
-          if (onDeleteEvent) {
-            await onDeleteEvent(finalTranscript);
-            resetTranscript();
-          }
         },
         consultar: async () => {
-          console.log("Consultar")
-          if (onConsultEvents) {
-            await onConsultEvents(finalTranscript);
-            resetTranscript();
-          }
-        },
-        "cerrar menú": async () => {
-          // Implementar si es necesario
-          alert("Comando detectado: Cerrar menú");
-          resetTranscript();
         },
         reiniciar: async () => {
           resetTranscript();
@@ -85,17 +61,16 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
           resetTranscript();
         }
       };
-      
 
     const handleButtonClick = () => {
         if (listening) {
             handleStopListening();
+            DataEnviada(false)
         } else {
             // resetTranscript();
             SpeechRecognition.startListening({ language: 'es-EC', continuous: true, interimResults: false });
         }
     };
-
 
     const handleStopListening = () => {
         SpeechRecognition.stopListening();
@@ -125,26 +100,8 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
             }
           })();
         }
-      }, [finalTranscript, commandKeywords, commands, onTranscriptionComplete, onEditEvent, onDeleteEvent, onConsultEvents, resetTranscript]);
+      }, [finalTranscript, commandKeywords, commands, onTranscriptionComplete,resetTranscript]);
       
-
-    // Efecto para verificar comandos en la transcripción en tiempo real
-    // useEffect(() => {
-    //     // Verificar y ejecutar comandos
-    //     (Object.keys(commandKeywords) as CommandKey[]).forEach((command) => {
-    //         commandKeywords[command].forEach((keyword) => {
-    //             if (transcript.toLowerCase().includes(keyword)) {
-    //                 commands[command]();
-    //                 resetTranscript();
-    //             }
-    //         });
-    //     });
-
-    //     // Notificar al componente padre sobre la transcripción actual
-    //     if (onTranscriptionChange) {
-    //         onTranscriptionChange(transcript);
-    //     }
-    // }, [transcript]);
 
     if (!isClient) {
         return <div>Cargando...</div>;
