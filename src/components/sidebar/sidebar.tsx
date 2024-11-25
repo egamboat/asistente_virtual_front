@@ -13,8 +13,12 @@ const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [storedData, setStoredData] = useState<UserData | null>(null);
 
-  // Detectar si es dispositivo móvil
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/"); // Usa router desde el hook
+    }
+
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
       if (window.innerWidth <= 768) {
@@ -25,7 +29,7 @@ const Sidebar = () => {
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
+  }, [router]);
 
   // Cargar datos del usuario
   useEffect(() => {
@@ -42,10 +46,6 @@ const Sidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const clearMessages = () => {
-    localStorage.removeItem('assistantMessages');
-  };
-
   const logOut = () => {
     try {
       googleLogout();
@@ -58,7 +58,6 @@ const Sidebar = () => {
         setStoredData(null);
 
         router.push('/');
-        clearMessages()
       }
     } catch (error) {
       console.error('Error during logout:', error);

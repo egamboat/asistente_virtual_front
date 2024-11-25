@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Asistente Virtual",
-  description: "Asistente Vitual para Docentes de UNEMI",
+  description: "Asistente Virtual para Docentes de UNEMI",
 };
 
 export default function RootLayout({
