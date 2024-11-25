@@ -51,6 +51,10 @@ const Sidebar = () => {
       googleLogout();
       if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
         localStorage.removeItem('userData');
+        localStorage.removeItem('token');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+
         setStoredData(null);
 
         router.push('/');
