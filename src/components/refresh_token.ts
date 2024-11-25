@@ -23,7 +23,7 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
         const refreshToken = localStorage.getItem('refresh_token');
 
         if (refreshToken) {
-            const tokenResponse = await fetch('http://localhost:8000/usuario/api/token/refresh/', {
+            const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}usuario/api/token/refresh/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
