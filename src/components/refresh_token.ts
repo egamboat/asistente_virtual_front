@@ -23,7 +23,6 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
         const refreshToken = localStorage.getItem('refresh_token');
 
         if (refreshToken) {
-            // Solicita un nuevo token de acceso usando el refresh token
             const tokenResponse = await fetch('http://localhost:8000/usuario/api/token/refresh/', {
                 method: 'POST',
                 headers: {
@@ -45,12 +44,12 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
                 // Si el refresh token también ha expirado, redirige al usuario al login
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                window.location.href = '/login/';
-                return Promise.reject('El refresh token ha expirado. Redirigiendo al login.');
+                window.location.href = '/';
+                return Promise.reject('El refresh token ha expirado.');
             }
         } else {
             // No hay refresh token, redirige al login
-            window.location.href = '/login/';
+            window.location.href = '/';
             return Promise.reject('No hay refresh token. Redirigiendo al login.');
         }
     }

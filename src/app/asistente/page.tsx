@@ -40,7 +40,7 @@ const Home: React.FC = () => {
       data.fecha_fin = data.fecha_inicio;
     }
     async function sendDataToBackend() {
-      const url = 'http://localhost:8000/asistente/api/eventos/';
+      const url =` ${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
 
       try {
         const response = await customFetch(url, {

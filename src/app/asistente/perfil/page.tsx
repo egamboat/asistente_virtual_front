@@ -43,38 +43,6 @@ const Perfil = () => {
     }, []);
 
 
-    // async function sendDataToBackend() {
-    //     const url = 'http://localhost:8000/asistente/api/eventos/';
-    //     const payload = {
-    //         descripcion: "Prueba sin enviar id de la agenda",
-    //         fecha_inicio: "2024-11-20T22:00:00",
-    //         fecha_fin: "2024-11-21T22:00:00",
-    //         // agenda: 2,
-    //         tipo_evento: 1,
-    //         modalidad: 2,
-    //     };
-
-    //     try {
-    //         const response = await customFetch(url, {
-    //             method: 'POST',
-    //             body: JSON.stringify(payload),
-    //         });
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log('Respuesta del backend:', data);
-    //             alert('Datos enviados con éxito');
-    //         } else {
-    //             const errorData = await response.json();
-    //             console.error('Error del backend:', errorData);
-    //             alert('Error al enviar los datos al backend');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error al realizar la solicitud:', error);
-    //         alert('Hubo un error al conectar con el backend');
-    //     }
-    // }
-
 
     return (
         <div className="bg-white flex flex-col justify-between">
@@ -115,9 +83,9 @@ const Perfil = () => {
                Send Data
             </button>  */}
 
-            <div className="flex justify-center items-center mt-12">
+            {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
-            </div>
+            </div> */}
             {isModalOpen && (
                 <ModalAyuda
                     isOpen={isModalOpen}

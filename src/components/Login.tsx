@@ -7,7 +7,7 @@ export default function Login() {
 
   async function sendTokenToBackend(token: string) {
     try {
-      const response = await fetch('http://localhost:8000/usuario/api/google-login/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}usuario/api/google-login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,14 +16,16 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.error('Data', data);
 
       if (response.ok) {
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
 
         window.location.href = '/asistente/';
+
       } else {
-        console.error('Error al autenticar con el backend:', data.error);
+        console.error('Error al autenticar con el backend:',response);
       }
     } catch (error) {
       console.error('Error al enviar el token al backend:', error);

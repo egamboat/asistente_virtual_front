@@ -18,11 +18,11 @@ export default function Home() {
       title: 'Gestión Horarios',
       description: 'Organiza tus clases, horarios de consulta y reuniones académicas.'
     },
-    // {
-    //   icon: <Clock className="text-blue-600" size={24} />,
-    //   title: 'Resolución de Conflictos',
-    //   description: 'Detecta y resuelve instantáneamente conflictos entre clases y eventos.'
-    // },
+    {
+      icon: <Clock className="text-blue-600" size={24} />,
+      title: 'Crea Eventos con la Voz',
+      description: 'Mediante comandos de voz, crea eventos con los detalles que necesites.'
+    },
     {
       icon: <Users className="text-blue-600" size={24} />,
       title: 'Horarios de Consulta',
@@ -68,7 +68,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-[#234AB7]">Assitente Virtual</h1>
+                <h1 className="text-2xl font-bold text-[#234AB7]">Asistente Virtual</h1>
               </div>
 
               {/* Navegación Escritorio */}
@@ -106,7 +106,7 @@ export default function Home() {
         {/* Sección Hero */}
         <div className="pt-32 pb-20 text-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#234AB7] mb-4 flex justify-center items-center">
+            <h1 className="flex justify-center items-center">
               <Image
                 src="/logo_negro.png"
                 width={250}
@@ -114,14 +114,17 @@ export default function Home() {
                 alt="Logo Nomi Asistente Virtual"
                 className="mr-2"
               />
-              <span className="text-gray-900 text-3xl">¡Gestiona tu Agenda!</span>
-            </h1>
 
+            </h1>
+            <div className='mb-4 text-4xl sm:text-5xl md:text-6xl font-extrabold'>
+              <span className="text-gray-900 text-3xl">¡Gestiona tu Agenda!</span>
+
+            </div>
             {(loading) && <Cargando />}
 
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Optimiza tu agenda y gestiona tus horarios académicos con nuestro asistente virtual inteligente.
-              ¡Diseñado específicamente para docentes!
+              Gestiona tu agenda y tus horarios académicos mediante comandos de voz, con nuestro asistente virtual inteligente.<br/>
+              ¡Diseñado para docentes!
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <button onClick={handleLoginClick}>
@@ -137,7 +140,7 @@ export default function Home() {
         {/* Sección Características */}
         <div id="features" className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-12">Funciones Inteligentes para Educadores</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">Funciones para Educadores</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {features.map((feature, index) => (
                 <div key={index} className="flex flex-col p-6 bg-white rounded-lg shadow-sm">
