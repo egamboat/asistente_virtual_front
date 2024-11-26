@@ -13,7 +13,7 @@ export const editarEvento = async (id: number, dataSend: any) => {
 
         if (response.ok) {
             const updatedEvent = await response.json();
-            toast.success('Evento actualizado con éxito');
+            // toast.success('Evento actualizado con éxito');
             return updatedEvent;
         } else {
             const errorData = await response.json();
@@ -32,7 +32,7 @@ export const eliminarEvento = async (id: number) => {
         const response = await customFetch(url, { method: 'DELETE' });
 
         if (response.ok) {
-            toast.success("Evento eliminado con éxito");
+            // toast.success("Evento eliminado con éxito");
             return true;
         } else {
             const errorData = await response.json();

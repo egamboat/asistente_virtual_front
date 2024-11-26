@@ -7,11 +7,24 @@ import MicrofonoBoton from '@/components/microfono/microfono';
 import { customFetch } from "@/components/refresh_token";
 import { Evento } from "@/interfaces/interfaceEventos";
 import DataTable from "react-data-table-component"
+import { editarEvento, eliminarEvento } from "@/utils/funciones";
+import { toast } from "react-toastify";
+import ModalEditarEvento from "./modal_editar";
+import ModalConfirmacion from "@/components/modals/confirmar";
 
 const Agenda: React.FC = () => {
     const [dataEvent, setEvents] = useState<Evento[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<Evento | null>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [eventToDelete, setEventToDelete] = useState<Evento | null>(null);
+
+    const modalidades = [
+        { id: 1, descripcion: "Presencial" },
+        { id: 2, descripcion: "Remota" },
+    ];
 
     useEffect(() => {
         async function fetchEvents() {
@@ -59,6 +72,43 @@ const Agenda: React.FC = () => {
         return date.toLocaleString("es-ES", options);
     };
 
+    const handleEdit = (event: Evento) => {
+        setSelectedEvent(event);
+        setIsModalOpen(true);
+    };
+
+    const handleSaveEdit = async (updatedEvent: Evento) => {
+        const savedEvent = await editarEvento(updatedEvent.id, updatedEvent);
+        if (savedEvent) {
+            setEvents(dataEvent.map(event => event.id === savedEvent.id ? savedEvent : event));
+            setIsModalOpen(false);
+            toast.success("Evento actualizado con éxito");
+        }
+    };
+
+    const handleOpenDeleteModal = (event: Evento) => {
+        setEventToDelete(event);
+        setIsDeleteModalOpen(true); // Abre el modal de confirmación
+    };
+
+    const handleConfirmDelete = async () => {
+        if (eventToDelete) {
+            const success = await eliminarEvento(eventToDelete.id);
+            if (success) {
+                setEvents(dataEvent.filter((event) => event.id !== eventToDelete.id));
+                toast.success("Evento eliminado con éxito");
+            } else {
+                toast.error("No se pudo eliminar el evento");
+            }
+            setIsDeleteModalOpen(false); // Cierra el modal de confirmación
+            setEventToDelete(null); // Limpia el evento a eliminar
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setIsDeleteModalOpen(false); // Cierra el modal de confirmación
+        setEventToDelete(null); // Limpia el evento a eliminar
+    };
 
     const columns = [
         {
@@ -79,6 +129,25 @@ const Agenda: React.FC = () => {
         {
             name: "Modalidad",
             selector: (row: any) => row.modalidad_descripcion,
+        },
+        {
+            name: "Acciones",
+            cell: (row: Evento) => (
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => handleEdit(row)}
+                        className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 rounded-sm"
+                    >
+                        <i className="ri-edit-2-line"></i>
+                    </button>
+                    <button
+                        onClick={() => handleOpenDeleteModal(row)}
+                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 rounded-sm"
+                    >
+                        <i className="ri-delete-bin-6-line"></i>
+                    </button>
+                </div>
+            ),
         },
     ];
 
@@ -103,10 +172,10 @@ const Agenda: React.FC = () => {
             style: {
                 backgroundColor: "white",
                 "&:nth-of-type(odd)": {
-                    backgroundColor: "#f5f5f5", // Alternar colores
+                    backgroundColor: "#f5f5f5",
                 },
                 "&:hover": {
-                    backgroundColor: "#e2e8f0", // Hover
+                    backgroundColor: "#e2e8f0",
                 },
             },
         },
@@ -140,9 +209,26 @@ const Agenda: React.FC = () => {
                         noDataComponent="No hay eventos disponibles."
                         pagination
                         paginationComponentOptions={paginationOptions}
+                    // customStyles={customStyles}
+
                     />
                 </div>
             </div>
+
+            <ModalEditarEvento
+                isOpen={isModalOpen}
+                eventData={selectedEvent}
+                modalidades={modalidades}
+                onClose={() => setIsModalOpen(false)}
+                onSave={handleSaveEdit}
+            />
+
+            <ModalConfirmacion
+                isOpen={isDeleteModalOpen}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                mensaje={`¿Estás seguro que deseas eliminar el evento "${eventToDelete?.descripcion}"?`}
+            />
 
             {/* <div className="flex justify-center items-center">
                 <MicrofonoBoton />
