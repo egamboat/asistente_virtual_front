@@ -33,7 +33,7 @@ const promptBase = (currentDateTime: string) => `
   Respuesta:
   JSON:
   {
-    "descripcion": "Reunion a las 10pm sobre -Descripción del Evento-.",
+    "descripcion": "Evento a las 10pm sobre ....",
     "fecha_inicio": "2024-11-22T10:00:00",
     "fecha_fin": "",
     "tipo_evento": "Reunión",

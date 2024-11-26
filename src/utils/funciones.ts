@@ -66,3 +66,32 @@ export const cargarEventos = async () => {
         throw error;
     }
 };
+
+// Función para crear evento
+export const crearEvento = async (dataSend: any) => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/asistente/api/eventos/`;
+  
+      const response = await customFetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataSend),
+      });
+  
+      if (response.ok) {
+        const newEvent = await response.json();
+        toast.success('Evento creado con éxito');
+        return newEvent;
+      } else {
+        const errorData = await response.json();
+        toast.error(`Error al crear el evento: ${errorData.detail || "Error desconocido"}`);
+        throw new Error(errorData.detail || "Error desconocido");
+      }
+    } catch (error) {
+      console.error("Error al crear el evento:", error);
+      toast.error("Error al crear el evento. Por favor, inténtalo de nuevo.");
+      throw error;
+    }
+  };

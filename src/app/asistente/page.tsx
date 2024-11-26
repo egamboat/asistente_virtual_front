@@ -11,6 +11,7 @@ import {
 } from "@/utils/servicios"
 import { customFetch } from '@/components/refresh_token';
 import { toast } from 'react-toastify';
+import { Evento } from '@/interfaces/interfaceEventos';
 
 interface ProcessedContent {
   userMessage: string;
@@ -19,7 +20,6 @@ interface ProcessedContent {
 }
 
 const Home: React.FC = () => {
-  const [processedJson, setProcessedJson] = useState<Event>();
   const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
   const [dataSent, setDataSent] = useState(false);
@@ -40,7 +40,7 @@ const Home: React.FC = () => {
       data.fecha_fin = data.fecha_inicio;
     }
     async function sendDataToBackend() {
-      const url =` ${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
+      const url = ` ${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
 
       try {
         const response = await customFetch(url, {
@@ -112,10 +112,9 @@ const Home: React.FC = () => {
     if (assistantMessages.length > 0) {
       const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
       const processedContent = processAssistantMessage(lastAssistantMessage.content);
-  
-      setProcessedJson(processedContent.json);
+
       setIsComplete(processedContent.isComplete);
-  
+
       if (processedContent.isComplete && processedContent.json && !dataSent) {
         const dataSend = {
           descripcion: processedContent.json.descripcion,
@@ -125,7 +124,7 @@ const Home: React.FC = () => {
           modalidad: processedContent.json.modalidad,
         };
         handleDataSend(dataSend);
-          setDataSent(true);
+        setDataSent(true);
       }
     }
   }, [messages]);
@@ -176,7 +175,7 @@ const Home: React.FC = () => {
               );
             })}
 
-         
+
           </div>
         </div>
       </div>
@@ -185,9 +184,27 @@ const Home: React.FC = () => {
         <MicrofonoBoton
           onTranscriptionComplete={handleTranscriptionComplete}
           DataEnviada={setDataSent}
+          accionIdentificada={(identifier) => {
+            switch (identifier) {
+              case 1:
+                console.log("Crear")
+                break;
+              case 2:
+                console.log("Consultar")
+                break;
+              case 3:
+                console.log("Editar")
+                break;
+              case 4:
+                console.log("Eliminar")
+                break;
+              default:
+                console.log("Otros")
+                break;
+            }
+          }}
         />
-
-      </div>
+      </div >
     </div >
   );
 }

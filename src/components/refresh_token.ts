@@ -12,13 +12,11 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
     if (accessToken) {
         headers.set('Authorization', `Bearer ${accessToken}`);
     }
-    // Actualiza las opciones con los encabezados
     options.headers = headers;
 
 
     let response = await fetch(url, options);
 
-    // Si el token ha expirado, intenta refrescarlo
     if (response.status === 401) {
         const refreshToken = localStorage.getItem('refresh_token');
 
