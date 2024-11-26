@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { customFetch } from "@/components/refresh_token";
 import { toast } from "react-toastify";
 import ModalAyuda from "./modal_ayuda";
+import { eliminarEvento, editarEvento } from "@/utils/funciones";
 
 const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
@@ -42,6 +43,23 @@ const Perfil = () => {
         }
     }, []);
 
+    const handleEliminarEvento = async () => {
+        const id = 106; // ID del evento que deseas eliminar (puedes pasarlo dinámicamente)
+        const isDeleted = await eliminarEvento(id);
+    };
+
+    const handleEditarEvento = async () => {
+        const id:number = 110;
+        const dataSend = {
+            descripcion: "Actualización 110",
+            fecha_inicio: "2024-12-08T14:00:00Z",
+            fecha_fin: "2024-12-08T16:00:00Z",
+            tipo_evento: 5,
+            modalidad: 2,
+        };
+
+        await editarEvento(id, dataSend);
+    };
 
 
     return (
@@ -79,8 +97,11 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-            {/* <button onClick={sendDataToBackend}>
-               Send Data
+            {/* <button onClick={handleEditarEvento}>
+               Update Data
+            </button> 
+            <button onClick={handleEliminarEvento}>
+               Delete Data
             </button>  */}
 
             {/* <div className="flex justify-center items-center mt-12">

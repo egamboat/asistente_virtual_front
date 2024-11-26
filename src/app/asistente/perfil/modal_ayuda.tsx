@@ -21,8 +21,8 @@ const ModalAyuda: React.FC<ModalAyudaProps> = ({ isOpen, onClose, onEnviar }) =>
             toast.warning('El mensaje no puede estar vacío'); // Puedes cambiar esto por un toast
             return;
         }
-        onEnviar(mensaje); // Pasamos el mensaje al evento `onEnviar`
-        setMensaje(''); // Limpiamos el input
+        onEnviar(mensaje);
+        setMensaje(''); 
     };
 
     return (

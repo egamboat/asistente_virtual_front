@@ -44,12 +44,12 @@ export async function customFetch(url: string, options: RequestInit = {}): Promi
                 // Si el refresh token también ha expirado, redirige al usuario al login
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
-                window.location.href = '/';
+                // window.location.href = '/';
                 return Promise.reject('El refresh token ha expirado.');
             }
         } else {
             // No hay refresh token, redirige al login
-            window.location.href = '/';
+            // window.location.href = '/';
             return Promise.reject('No hay refresh token. Redirigiendo al login.');
         }
     }
