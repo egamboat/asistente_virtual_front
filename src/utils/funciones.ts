@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 // Función para editar un evento
 export const editarEvento = async (id: number, dataSend: any) => {
     try {
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/asistente/api/eventos/${id}/`;
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/${id}/`;
         const response = await customFetch(url, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,7 @@ export const editarEvento = async (id: number, dataSend: any) => {
 // Función para eliminar un evento
 export const eliminarEvento = async (id: number) => {
     try {
-        const url = `${process.env.NEXT_PUBLIC_BASE_URL}/asistente/api/eventos/${id}/`;
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/${id}/`;
         const response = await customFetch(url, { method: 'DELETE' });
 
         if (response.ok) {
@@ -49,7 +49,7 @@ export const eliminarEvento = async (id: number) => {
 // Función para cargar eventos
 export const cargarEventos = async () => {
     try {
-        const response = await customFetch(`${process.env.NEXT_PUBLIC_BASE_URL}/asistente/api/eventos/`, {
+        const response = await customFetch(`${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`, {
             method: 'GET',
         });
 
@@ -70,7 +70,7 @@ export const cargarEventos = async () => {
 // Función para crear evento
 export const crearEvento = async (dataSend: any) => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}/asistente/api/eventos/`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
   
       const response = await customFetch(url, {
         method: 'POST',

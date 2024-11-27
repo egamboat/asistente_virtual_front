@@ -34,8 +34,8 @@ const ModalEditarEvento: React.FC<ModalEditarEventoProps> = ({ isOpen, eventData
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg w-1/2">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+              <div className="bg-white p-6 rounded-lg w-full max-w-3xl md:w-3/4 lg:w-1/2">
                 <h2 className="text-xl font-bold mb-4">Editar Evento</h2>
                 <label className="block mb-2">
                     Descripción:
