@@ -8,14 +8,23 @@ import { customFetch } from "@/components/refresh_token";
 import { toast } from "react-toastify";
 import ModalAyuda from "./modal_ayuda";
 import { eliminarEvento, editarEvento } from "@/utils/funciones";
+import { Building, Mail } from "lucide-react";
+import { googleLogout } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import ModalConfirmacion from "@/components/modals/confirmar";
 
 const Perfil = () => {
+    const router = useRouter();
     const [storedData, setStoredData] = useState<UserData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const openDeleteModal = () => setIsDeleteModalOpen(true);
+
+    const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
     const handleOpenModal = () => {
-        // Aquí puedes agregar la lógica de validación
-        const canOpenModal = true; // Cambia esta condición según tu lógica
+        const canOpenModal = true;
         if (canOpenModal) {
             setIsModalOpen(true);
         } else {
@@ -43,24 +52,56 @@ const Perfil = () => {
         }
     }, []);
 
-    const handleEliminarEvento = async () => {
-        const id = 106; // ID del evento que deseas eliminar (puedes pasarlo dinámicamente)
-        const isDeleted = await eliminarEvento(id);
+    const handleDeleteAccount = async () => {
+        try {
+            const accessToken = localStorage.getItem("access_token");
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}usuario/api/delete-account/`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            const result = await response.json();
+
+            if (response.ok) {
+                toast.warning("Cuenta eliminada exitosamente.");
+
+                setTimeout(() => {
+                    logOut();
+                }, 5000);
+            } else {
+                toast.error(`Error: ${result.error}`);
+            }
+        } catch (error) {
+            console.error("Error al eliminar la cuenta:", error);
+            toast.error("Hubo un problema al eliminar la cuenta.");
+        } finally {
+            closeDeleteModal();
+        }
     };
 
-    const handleEditarEvento = async () => {
-        const id:number = 110;
-        const dataSend = {
-            descripcion: "Actualización 110",
-            fecha_inicio: "2024-12-08T14:00:00Z",
-            fecha_fin: "2024-12-08T16:00:00Z",
-            tipo_evento: 5,
-            modalidad: 2,
-        };
+    const logOut = () => {
+        try {
+            googleLogout();
+            if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+                localStorage.removeItem('userData');
+                localStorage.removeItem('token');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
 
-        await editarEvento(id, dataSend);
+                setStoredData(null);
+
+                router.push('/');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
     };
-
 
     return (
         <div className="bg-white flex flex-col justify-between">
@@ -80,29 +121,53 @@ const Perfil = () => {
                     {storedData && storedData.name ? `Hola ${storedData.name}!` : "Hola!"}
                 </h2>
 
-                <div className="mb-4">
-                    <h3 className="text-lg font-bold my-2">Tus datos:</h3>
-                    <p>Email: {storedData && storedData.name ? `${storedData.email}` : ""} </p>
-                    <p>Institución: {Usuario.docente.facultad}</p>
-                    {/* <p>Miembro desde: {Usuario.fechaIngreso}</p> */}
-                    {/* <p>Usos: Haz usado el asistente 10 veces</p> */}
+                <div className="space-y-4">
+                    <div className="bg-white/70 p-4 rounded-lg shadow-md">
+                        <h3 className="text-xl font-semibold text-gray-700 mb-3 border-b pb-2">
+                            Tus Datos
+                        </h3>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center space-x-8">
+                                {/* Email */}
+                                <div className="flex items-center">
+                                    <Mail className="mr-2 text-blue-500" size={20} />
+                                    <div>
+                                        <p className="text-gray-600 font-semibold">
+                                            Email:
+                                        </p>
+                                        <p className="font-normal">
+                                            {storedData?.email || "No disponible"}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Institución */}
+                                <div className="flex items-center">
+                                    <Building className="mr-2 text-blue-500" size={20} />
+                                    <div>
+                                        <p className="text-gray-600 font-semibold">
+                                            Institución:
+                                        </p>
+                                        <p className="font-normal">
+                                            {storedData?.email ? storedData.email.split('@')[1].split('.')[0].toUpperCase() : "No especificada"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="my-2 p-2">
                     <h3 className="text-lg font-bold my-4">Cuenta:</h3>
                     <div className="flex justify-between space-x-2">
-                        <button className="bg-white py-2 px-4 rounded-lg">Borrar Cuenta</button>
+                        <button className="bg-white py-2 px-4 rounded-lg" onClick={openDeleteModal} >Borrar Cuenta</button>
                         {/* <button className="bg-white py-2 px-4 rounded">Restablecer Contraseña</button> */}
                         <button onClick={handleOpenModal} className="bg-white py-2 px-4 rounded-lg">Solicitar Ayuda</button>
                     </div>
                 </div>
             </div>
-            {/* <button onClick={handleEditarEvento}>
-               Update Data
-            </button> 
-            <button onClick={handleEliminarEvento}>
-               Delete Data
-            </button>  */}
 
             {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
@@ -114,6 +179,12 @@ const Perfil = () => {
                     onEnviar={handleEnviarAyuda}
                 />
             )}
+            <ModalConfirmacion
+                isOpen={isDeleteModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={handleDeleteAccount}
+                mensaje="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
+            />
         </div >
 
     );
