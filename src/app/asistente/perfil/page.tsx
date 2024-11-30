@@ -116,7 +116,7 @@ const Perfil = () => {
                 </div>
             </div>
 
-            <div className="p-8 mt-32 bg-[#D9D9D9] rounded-xl mx-4">
+            <div className="p-8 mt-28 bg-[#D9D9D9] rounded-xl mx-4">
                 <h2 className="text-2xl font-semibold mb-4">
                     {storedData && storedData.name ? `Hola ${storedData.name}!` : "Hola!"}
                 </h2>
@@ -127,38 +127,47 @@ const Perfil = () => {
                             Tus Datos
                         </h3>
 
-                        <div className="space-y-2">
-                            <div className="flex items-center space-x-8">
-                                {/* Email */}
-                                <div className="flex items-center">
-                                    <Mail className="mr-2 text-blue-500" size={20} />
-                                    <div>
-                                        <p className="text-gray-600 font-semibold">
-                                            Email:
-                                        </p>
-                                        <p className="font-normal">
-                                            {storedData?.email || "No disponible"}
-                                        </p>
+                        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
+                            {/* Información de Usuario */}
+                            <div className="space-y-2">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-8 space-y-4 sm:space-y-0">
+                                    {/* Email */}
+                                    <div className="flex items-center">
+                                        <Mail className="mr-2 text-blue-500" size={20} />
+                                        <div>
+                                            <p className="text-gray-600 font-semibold">Email:</p>
+                                            <p className="font-normal">
+                                                {storedData?.email || "No disponible"}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                {/* Institución */}
-                                <div className="flex items-center">
-                                    <Building className="mr-2 text-blue-500" size={20} />
-                                    <div>
-                                        <p className="text-gray-600 font-semibold">
-                                            Institución:
-                                        </p>
-                                        <p className="font-normal">
-                                            {storedData?.email ? storedData.email.split('@')[1].split('.')[0].toUpperCase() : "No especificada"}
-                                        </p>
+                                    {/* Institución */}
+                                    <div className="flex items-center">
+                                        <Building className="mr-2 text-blue-500" size={20} />
+                                        <div>
+                                            <p className="text-gray-600 font-semibold">Institución:</p>
+                                            <p className="font-normal">
+                                                {storedData?.email
+                                                    ? storedData.email.split("@")[1].split(".")[0].toUpperCase()
+                                                    : "No especificada"}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Foto de perfil */}
+                            <div className="flex justify-center md:justify-end">
+                                <img
+                                    src={storedData?.picture}
+                                    alt="Foto de perfil"
+                                    className="w-16 h-16 rounded-full border border-gray-300"
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div className="my-2 p-2">
                     <h3 className="text-lg font-bold my-4">Cuenta:</h3>
                     <div className="flex justify-between space-x-2">

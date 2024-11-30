@@ -39,6 +39,7 @@ export default function Login() {
       const token=(credentialResponse.credential);
       localStorage.setItem('token', credentialResponse.credential);
 
+      const { email, picture, name } = payload;
 
       const response = await fetch("/api/google", {
         method: "POST",
@@ -50,7 +51,8 @@ export default function Login() {
 
       await sendTokenToBackend(token);
 
-      localStorage.setItem('userData', JSON.stringify(json));
+      // localStorage.setItem('userData', JSON.stringify(json));
+      localStorage.setItem("userData", JSON.stringify({ ...json, picture, name }));
 
       window.location.href = '/asistente/'
       setEmail(json.email);

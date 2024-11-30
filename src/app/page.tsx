@@ -123,7 +123,7 @@ export default function Home() {
             {(loading) && <Cargando />}
 
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              Gestiona tu agenda y tus horarios académicos mediante comandos de voz, con nuestro asistente virtual inteligente.<br/>
+              Gestiona tu agenda y tus horarios académicos mediante comandos de voz, con nuestro asistente virtual inteligente.<br />
               ¡Diseñado para docentes!
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -154,6 +154,28 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Sección Sobre Nomi */}
+        <div id="about-nomi" className="py-20 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center mb-8">¿Por qué "Nomi"?</h2>
+            <p className="text-xl text-gray-700 text-center max-w-3xl mx-auto mb-10">
+              El nombre "Nomi" surge de la idea de tener un asistente virtual amigable, eficiente y siempre disponible para
+              ayudarte con la gestión de tu agenda académica. Inspirado en la palabra *"nominar"*, representa nuestra misión:
+              destacar y optimizar tus tareas diarias para que puedas enfocarte en lo que realmente importa: enseñar.
+            </p>
+            <div className="flex justify-center">
+              <Image
+                src="/logo_negro.png"
+                alt="Icono de Nomi"
+                width={150}
+                height={150}
+              />
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </GoogleOAuthProvider>
 
