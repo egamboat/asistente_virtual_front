@@ -16,7 +16,12 @@ import { customFetch } from "@/components/refresh_token";
 const Calendario: FC = () => {
   const [dataEvent, setEvents] = useState<any[]>([]);
   const [calendarId, setCalendarId] = useState<string>("");
-  const accessToken = localStorage.getItem("access_token") || "";
+  const [accessToken, setAccessToken] = useState<string>("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token") || "";
+    setAccessToken(token);
+  }, []); // Solo se ejecuta en el cliente
 
   // Transformar eventos del backend para FullCalendar
   const transformEvents = (events: Evento[]) => {
@@ -105,7 +110,7 @@ const Calendario: FC = () => {
     }
   };
   
-  const googleCalendarApiKey = `${process.env.GOOGLE_CALENDAR_API_KEY}`;
+  // const googleCalendarApiKey = `${process.env.GOOGLE_CALENDAR_API_KEY}`;
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -123,7 +128,7 @@ const Calendario: FC = () => {
           <FullCalendar
             plugins={[dayGridPlugin, googleCalendarPlugin, interactionPlugin]}
             initialView="dayGridMonth"
-            googleCalendarApiKey={googleCalendarApiKey}
+            googleCalendarApiKey="AIzaSyCXuApDtC5wOYXXY6T2FYaceYG23tUAdV8"
             weekends={true}
             locale={esLocale}
             selectable={true}
