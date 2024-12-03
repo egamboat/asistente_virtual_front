@@ -18,6 +18,7 @@ const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
 
@@ -31,6 +32,11 @@ const Perfil = () => {
             toast.error('No puedes abrir el modal en este momento.');
         }
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem("access_token");
+        setAccessToken(token);
+    }, []);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -103,6 +109,57 @@ const Perfil = () => {
         }
     };
 
+    const handleGetEvents = async () => {
+        if (!accessToken) return;
+
+        try {
+            const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            const data = await response.json();
+            console.log('Eventos:', data.items);
+        } catch (error) {
+            console.error('Error obteniendo eventos:', error);
+        }
+    };
+
+    const handleCreateEvent = async () => {
+        if (!accessToken) return;
+
+        const eventData = {
+            summary: 'Reunión de equipo',
+            location: 'Oficina',
+            description: 'Reunión mensual de planificación',
+            start: {
+                dateTime: '2024-12-03T09:00:00-07:00', // Fecha y hora de inicio
+                timeZone: 'America/Los_Angeles',
+            },
+            end: {
+                dateTime: '2024-12-04T10:00:00-07:00', // Fecha y hora de fin
+                timeZone: 'America/Los_Angeles',
+            },
+        };
+
+        try {
+            const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(eventData),
+            });
+
+            const data = await response.json();
+            console.log('Evento creado:', data);
+        } catch (error) {
+            console.error('Error creando evento:', error);
+        }
+    };
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -177,7 +234,8 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-
+            <button onClick={handleGetEvents}> Cargar Eventos </button>
+            <button onClick={handleCreateEvent}> Crear Eventos </button>
             {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div> */}

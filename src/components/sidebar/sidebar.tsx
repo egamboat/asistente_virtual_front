@@ -15,9 +15,9 @@ const Sidebar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/"); // Usa router desde el hook
-    }
+    // if (!token) {
+    //   router.push("/"); // Usa router desde el hook
+    // }
 
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
