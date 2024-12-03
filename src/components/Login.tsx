@@ -1,5 +1,5 @@
 import decodeJwt from "@/utils/decodeJwt";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 
 export default function Login() {

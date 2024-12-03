@@ -1,19 +1,24 @@
 "use client";
+
 import Reloj from "@/components/reloj/reloj";
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import { EventApi } from '@fullcalendar/core';
+
 import esLocale from "@fullcalendar/core/locales/es";
 import { FC, useEffect, useState } from "react";
 import { Evento } from "@/interfaces/interfaceEventos";
-import MicrofonoBoton from '@/components/microfono/microfono';
+import googleCalendarPlugin from "@fullcalendar/google-calendar";
+import interactionPlugin from "@fullcalendar/interaction";
+import { createGoogleCalendarEvent } from "@/utils/google_apis";
 import { customFetch } from "@/components/refresh_token";
 
 const Calendario: FC = () => {
-  const [dataEvent, setEvents] = useState<Evento[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [dataEvent, setEvents] = useState<any[]>([]);
+  const [calendarId, setCalendarId] = useState<string>("");
+  const accessToken = localStorage.getItem("access_token") || "";
 
+  // Transformar eventos del backend para FullCalendar
   const transformEvents = (events: Evento[]) => {
     return events.map(event => ({
       title: event.descripcion,
@@ -24,47 +29,83 @@ const Calendario: FC = () => {
         modalidad_descripcion: event.modalidad_descripcion,
         tipo_evento: event.tipo_evento,
         modalidad: event.modalidad,
-        descripcionCompleta: event.descripcion, // Agregamos la descripción completa aquí
+        descripcionCompleta: event.descripcion,
       },
     }));
   };
 
+  // Cargar eventos del backend
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await customFetch(`${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`, {
-          method: 'GET',
-        });
+        const response = await customFetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`,
+          {
+            method: "GET",
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
-          setEvents(data);
+          const transformedEvents = transformEvents(data);
+          setEvents(transformedEvents); // Guardar eventos transformados
         } else {
-          const errorData = await response.json();
-          setError(errorData);
-          console.error('Error al obtener los eventos:', errorData);
+          console.error("Error al obtener eventos del backend");
         }
       } catch (error) {
-        setError(error);
-        console.error('Error al realizar la solicitud:', error);
-      } finally {
-        setLoading(false);
+        console.error("Error al realizar la solicitud:", error);
       }
     }
 
     fetchEvents();
   }, []);
 
-  const renderEventContent = (eventInfo: { timeText: string; event: EventApi }) => {
-    return (
-      <>
-        <b>{eventInfo.timeText}</b>
-        <i className="break-words overflow-hidden text-ellipsis whitespace-nowrap">
-          {eventInfo.event.title}
-        </i>
-      </>
-    );
+  // Obtener calendarId desde localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      const parsedUserData = JSON.parse(userData);
+      setCalendarId(parsedUserData.email);
+    } else {
+      console.error("No hay un ID de calendario");
+    }
+  }, []);
+
+
+  // Crear evento en Google Calendar
+  const handleDateSelect = async (info: { startStr: string; endStr: string }) => {
+    const title = prompt("Introduce el título del evento:");
+    const description = prompt("Introduce una descripción del evento:");
+    const location = prompt("Introduce la ubicación del evento:");
+
+    if (title) {
+      const newEvent = {
+        summary: title,
+        description,
+        location,
+        start: {
+          dateTime: info.startStr,
+          timeZone: "America/Guayaquil",
+        },
+        end: {
+          dateTime: info.endStr,
+          timeZone: "America/Guayaquil",
+        },
+      };
+
+      const response = await createGoogleCalendarEvent(calendarId, accessToken, newEvent);
+
+      if (response.success) {
+        alert(response.message);
+      } else {
+        alert(`Error al crear el evento: ${response.message}`);
+      }
+    } else {
+      alert("No se puede crear un evento sin título.");
+    }
   };
+  
+  const googleCalendarApiKey = `${process.env.GOOGLE_CALENDAR_API_KEY}`;
 
   return (
     <div className="h-full bg-white flex flex-col justify-between">
@@ -76,32 +117,31 @@ const Calendario: FC = () => {
           <Reloj />
         </div>
       </div>
+
       <div className="flex items-center justify-center rounded-lg pb-2 w-full">
-        <div className="bg-gray-100 rounded-lg p-2 w-full max-w-xl md:max-w-2xl">
+        <div className="bg-gray-100 rounded-lg p-2 w-full mx-w-xl md:max-w-2xl">
           <FullCalendar
-            plugins={[dayGridPlugin]}
+            plugins={[dayGridPlugin, googleCalendarPlugin, interactionPlugin]}
             initialView="dayGridMonth"
+            googleCalendarApiKey={googleCalendarApiKey}
             weekends={true}
-            events={transformEvents(dataEvent)}
             locale={esLocale}
-            eventContent={renderEventContent}
-            eventDidMount={(info) => {
-              // Agregamos el tooltip aquí
-              const tooltip = document.createElement('div');
-              tooltip.innerHTML = info.event.extendedProps.descripcionCompleta;
-              info.el.setAttribute('title', tooltip.textContent || '');
+            selectable={true}
+            select={(dataEvent) => {
+              handleDateSelect(dataEvent);
             }}
-            dayHeaderClassNames="capitalize"
-            buttonText={{
-              today: 'Hoy',
-            }}
-            titleFormat={{ year: 'numeric', month: 'long' }}
+            // Configuración de múltiples fuentes de eventos
+            eventSources={[
+              {
+                events: dataEvent, // Eventos del backend
+              },
+              {
+                googleCalendarId: calendarId, // Eventos de Google Calendar
+              },
+            ]}
           />
         </div>
       </div>
-      {/* <div className="flex justify-center items-center">
-        <MicrofonoBoton />
-      </div> */}
     </div>
   );
 };

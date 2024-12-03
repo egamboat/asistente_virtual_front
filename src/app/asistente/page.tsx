@@ -4,14 +4,9 @@ import Reloj from "@/components/reloj/reloj";
 import React, { useEffect, useState } from 'react';
 import MicrofonoBoton from '@/components/microfono/microfono';
 import { useChat } from "ai/react";
-import {
-  handleEditEvent,
-  handleDeleteEvent,
-  handleConsultEvents,
-} from "@/utils/servicios"
+import { handleEditEvent, handleDeleteEvent, handleConsultEvents } from "@/utils/servicios"
 import { customFetch } from '@/components/refresh_token';
 import { toast } from 'react-toastify';
-import { Evento } from '@/interfaces/interfaceEventos';
 
 interface ProcessedContent {
   userMessage: string;
@@ -23,6 +18,7 @@ const Home: React.FC = () => {
   const { messages, append } = useChat();
   const [isComplete, setIsComplete] = useState(false);
   const [dataSent, setDataSent] = useState(false);
+  const [currentAction, setCurrentAction] = useState<number | null>(null);
 
   const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
@@ -30,7 +26,6 @@ const Home: React.FC = () => {
       setDataSent(false);
 
       await append({ role: 'user', content: transcribedText });
-      console.log("Mensajes después de append:", messages);
     }
   };
 
@@ -66,26 +61,6 @@ const Home: React.FC = () => {
     sendDataToBackend();
   };
 
-  const handleCommandWrapper = async (
-    transcribedText: string,
-    handler: (message: any, append: (msg: any) => Promise<void>) => Promise<void>
-  ) => {
-    try {
-      await append({ role: 'user', content: transcribedText });
-
-      const message = {
-        role: "user" as const,
-        content: transcribedText,
-      };
-      await handler(message, async (msg) => {
-        await append(msg);
-      });
-    } catch (error) {
-      console.error("Error en handleCommandWrapper:", error);
-    }
-  };
-
-
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
     try {
 
@@ -115,7 +90,7 @@ const Home: React.FC = () => {
 
       setIsComplete(processedContent.isComplete);
 
-      if (processedContent.isComplete && processedContent.json && !dataSent) {
+      if (processedContent.isComplete && processedContent.json && !dataSent && currentAction === 1) {
         const dataSend = {
           descripcion: processedContent.json.descripcion,
           fecha_inicio: processedContent.json.fecha_inicio,
@@ -128,8 +103,28 @@ const Home: React.FC = () => {
       }
     }
   }, [messages]);
-  
-  
+
+  const handleAccion = (identifier: number) => {
+    setCurrentAction(identifier);
+    switch (identifier) {
+      case 1:
+        console.log("Comando: Crear");
+        break;
+      case 2:
+        console.log("Comando: Consultar");
+        break;
+      case 3:
+        console.log("Comando: Editar");
+        break;
+      case 4:
+        console.log("Comando: Eliminar");
+        break;
+      default:
+        console.log("Otros");
+        break;
+    }
+  };
+  console.log("Accion actual", currentAction)
   return (
     <div className="h-full bg-white flex flex-col justify-between">
       <div className="flex justify-between w-full mt-4">
@@ -147,7 +142,7 @@ const Home: React.FC = () => {
           {/* Initial message */}
           <div className="flex justify-start">
 
-            <div className="bg-gray-800 text-white p-4 rounded-lg shadow-lg mb-6 text-right">
+            <div className="bg-gray-800 text-white p-2 rounded-md shadow-lg mb-6 text-right">
               <span className={`text-xs block`} >
                 Nomi
               </span>
@@ -184,25 +179,7 @@ const Home: React.FC = () => {
         <MicrofonoBoton
           onTranscriptionComplete={handleTranscriptionComplete}
           DataEnviada={setDataSent}
-          accionIdentificada={(identifier) => {
-            switch (identifier) {
-              case 1:
-                console.log("Crear")
-                break;
-              case 2:
-                console.log("Consultar")
-                break;
-              case 3:
-                console.log("Editar")
-                break;
-              case 4:
-                console.log("Eliminar")
-                break;
-              default:
-                console.log("Otros")
-                break;
-            }
-          }}
+          accionIdentificada={handleAccion}
         />
       </div >
     </div >
