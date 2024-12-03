@@ -64,7 +64,7 @@ export default function Home() {
   const goToAdmin = () => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Obtiene la variable de entorno
     if (baseUrl) {
-      router.push(`${baseUrl}/admin/`); // Redirige a la URL construida
+      router.push(`${baseUrl}admin/`); // Redirige a la URL construida
     } else {
       console.error("NEXT_PUBLIC_BASE_URL no está definida en el entorno local.");
     }
@@ -105,11 +105,14 @@ export default function Home() {
           {/* Navegación Móvil */}
           {isMenuOpen && (
             <div className="md:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#features" className="block px-3 py-2 text-gray-600 hover:text-[#234AB7]">Características</a>
-                <a href="#demo" className="block px-3 py-2 text-gray-600 hover:text-[#234AB7]">Demostración</a>
-                <button className="w-full text-left px-3 py-2 text-gray-600 hover:text-[#234AB7]">
-                  Inicia Sesión
+              <div className="flex flex-col px-2 pt-2 pb-3 space-y-4 sm:px-3">
+                <a href="#features" className="text-gray-600 hover:text-[#234AB7]">Características</a>
+                <a href={tutorialUrl || "#"} className="btn text-gray-600 hover:text-[#234AB7]">Demostración</a>
+                <button
+                  onClick={goToAdmin}
+                  className="bg-[#234AB7] text-white px-2 py-2 rounded-md hover:bg-[#234AB7]"
+                >
+                  Ir al Administrador
                 </button>
               </div>
             </div>
@@ -143,9 +146,9 @@ export default function Home() {
               <button onClick={handleLoginClick}>
                 <Login />
               </button>
-              <button className="border border-[#dee0e3] text-[#54575a] px-8 py-2 rounded-sm hover:bg-gray-50 text-[.85rem] font-normal">
+              {/* <button className="border border-[#dee0e3] text-[#54575a] px-8 py-2 rounded-sm hover:bg-gray-50 text-[.85rem] font-normal">
                 Ver Tutorial
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
