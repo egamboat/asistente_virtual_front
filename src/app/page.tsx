@@ -7,10 +7,12 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, Users, BookOpen, Menu, X } from 'lucide-react';
 import Cargando from '@/components/loading';
 import Image from 'next/image';
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const features = [
     {
@@ -59,6 +61,17 @@ export default function Home() {
     };
   }, []);
 
+  const goToAdmin = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; // Obtiene la variable de entorno
+    if (baseUrl) {
+      router.push(`${baseUrl}/admin/`); // Redirige a la URL construida
+    } else {
+      console.error("NEXT_PUBLIC_BASE_URL no está definida en el entorno local.");
+    }
+  };
+
+  const tutorialUrl = process.env.NEXT_PUBLIC_TUTORIAL_VIDEO;
+
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
 
@@ -74,10 +87,10 @@ export default function Home() {
               {/* Navegación Escritorio */}
               <div className="hidden md:flex items-center space-x-8">
                 <a href="#features" className="text-gray-600 hover:text-[#234AB7]">Características</a>
-                {/* <a href="#demo" className="text-gray-600 hover:text-[#234AB7]">Demostración</a>
-                <button className="bg-[#234AB7] text-white px-4 py-2 rounded-md hover:bg-[#234AB7]">
-                  Prueba Gratis
-                </button> */}
+                <a href={tutorialUrl || "#"} className="btn text-gray-600 hover:text-[#234AB7]">Demostración</a>
+                <button onClick={goToAdmin} className="bg-[#234AB7] text-white px-4 py-2 rounded-md hover:bg-[#234AB7]">
+                  Ir al Administrador
+                </button>
               </div>
 
               {/* Botón menú móvil */}
@@ -161,8 +174,8 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-center mb-8">¿Por qué "Nomi"?</h2>
             <p className="text-xl text-gray-700 text-center max-w-3xl mx-auto mb-10">
               El nombre "Nomi" surge de la idea de tener un asistente virtual amigable, eficiente y siempre disponible para
-              ayudarte con la gestión de tu agenda académica. Inspirado en la palabra *"nominar"*, representa nuestra misión:
-              destacar y optimizar tus tareas diarias para que puedas enfocarte en lo que realmente importa: enseñar.
+              ayudarte con la gestión y creación de eventos en tu agenda académica. Inspirado en la palabra "NOMINAR" y "UNEMI", representa nuestra misión:
+              gestionar la organización de actividades académicas.
             </p>
             <div className="flex justify-center">
               <Image
