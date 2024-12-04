@@ -18,7 +18,7 @@ const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [accessTokenGoogle, setAccessTokenGoogle] = useState<string | null>(null);
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
 
@@ -34,8 +34,8 @@ const Perfil = () => {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem("access_token");
-        setAccessToken(token);
+        const token = localStorage.getItem("google_access_token");
+        setAccessTokenGoogle(token);
     }, []);
 
     const handleCloseModal = () => {
@@ -110,13 +110,13 @@ const Perfil = () => {
     };
 
     const handleGetEvents = async () => {
-        if (!accessToken) return;
+        if (!accessTokenGoogle) return;
 
         try {
             const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
                 method: 'GET',
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${accessTokenGoogle}`,
                 },
             });
 
@@ -128,7 +128,7 @@ const Perfil = () => {
     };
 
     const handleCreateEvent = async () => {
-        if (!accessToken) return;
+        if (!accessTokenGoogle) return;
 
         const eventData = {
             summary: 'Reunión de equipo',
@@ -149,7 +149,7 @@ const Perfil = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${accessTokenGoogle}`,
                 },
                 body: JSON.stringify(eventData),
             });
@@ -160,6 +160,62 @@ const Perfil = () => {
             console.error('Error creando evento:', error);
         }
     };
+
+    const handleUpdateEvent = async (eventId: any, updatedEventData: any) => {
+        if (!accessTokenGoogle) return;
+
+        try {
+            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+                method: 'PATCH', // También puedes usar 'PATCH' para actualizaciones parciales
+                headers: {
+                    'Authorization': `Bearer ${accessTokenGoogle}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedEventData),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Evento actualizado:', data);
+                toast.success("Actualizado")
+            } else {
+                console.error('Error al actualizar el evento:', data);
+            }
+        } catch (error) {
+            console.error('Error al actualizar el evento:', error);
+        }
+    };
+    const eventId = "879argep71m1kli77r5mj0ot54"; // Reemplaza con el ID real del evento
+    const updatedEventData = {
+        summary: 'Prueba de actualizacion',
+        description: 'Actualizacion del evento para el 3',
+        // Puedes agregar más campos a actualizar
+    };
+
+
+    const handleDeleteEvent = async (eventId:any) => {
+        if (!accessTokenGoogle) return;
+
+        try {
+            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessTokenGoogle}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log('Evento eliminado exitosamente');
+            } else {
+                const errorData = await response.json();
+                console.error('Error al eliminar el evento:', errorData);
+            }
+        } catch (error) {
+            console.error('Error al eliminar el evento:', error);
+        }
+    };
+    
+    // handleDeleteEvent(eventIddlt);
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -236,6 +292,8 @@ const Perfil = () => {
             </div>
             <button onClick={handleGetEvents}> Cargar Eventos </button>
             <button onClick={handleCreateEvent}> Crear Eventos </button>
+            <button onClick={() => handleUpdateEvent(eventId, updatedEventData)}>Editar</button>
+            <button onClick={() => handleDeleteEvent(eventId)}>Eliminar</button>
             {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div> */}

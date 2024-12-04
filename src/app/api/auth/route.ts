@@ -1,3 +1,4 @@
+// app/api/auth/route.ts
 import jwt_decode from 'jwt-decode';
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
   const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
-  const REDIRECT_URI = "http://localhost:3000/auth/callback"; // Asegúrate de que el URI esté registrado
+  const REDIRECT_URI = `${process.env.REDIRECT_URI}auth/callback`;
 
   if (!CLIENT_ID || !CLIENT_SECRET || !code) {
     return NextResponse.json(
@@ -45,15 +46,6 @@ export async function POST(req: NextRequest) {
     const decoded: JwtPayload = jwt_decode(tokenData.id_token);
     const { email, name, picture } = decoded;
 
-    // Guardar los datos en localStorage
-    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-      localStorage.setItem('userData', JSON.stringify({ email, name, picture }));
-      localStorage.setItem('access_token', tokenData.access_token);
-      localStorage.setItem('refresh_token', tokenData.refresh_token);
-      localStorage.setItem('id_token', tokenData.id_token);
-    }
-
-
     // Si todo es correcto, devolvemos los tokens
     return NextResponse.json({
       access_token: tokenData.access_token,
@@ -62,6 +54,7 @@ export async function POST(req: NextRequest) {
       token_type: tokenData.token_type,
       id_token: tokenData.id_token,
     });
+    
   } catch (error) {
     console.error("Error en la solicitud de tokens:", error);
     return NextResponse.json(
