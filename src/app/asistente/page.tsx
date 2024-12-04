@@ -7,6 +7,8 @@ import { useChat } from "ai/react";
 import { handleEditEvent, handleDeleteEvent, handleConsultEvents } from "@/utils/servicios"
 import { customFetch } from '@/components/refresh_token';
 import { toast } from 'react-toastify';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
+import { formatInTimeZone } from 'date-fns-tz'
 
 interface ProcessedContent {
   userMessage: string;
@@ -19,6 +21,7 @@ const Home: React.FC = () => {
   const [isComplete, setIsComplete] = useState(false);
   const [dataSent, setDataSent] = useState(false);
   const [currentAction, setCurrentAction] = useState<number | null>(null);
+  const { addEvent, timeZone } = useGoogleCalendar();
 
   const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
@@ -30,12 +33,13 @@ const Home: React.FC = () => {
   };
 
   const handleDataSend = async (data: any) => {
-
     if (!data.fecha_fin || data.fecha_fin.trim() === '') {
       data.fecha_fin = data.fecha_inicio;
     }
+
+    // Función para enviar datos a tu backend
     async function sendDataToBackend() {
-      const url = ` ${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
+      const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
 
       try {
         const response = await customFetch(url, {
@@ -44,26 +48,50 @@ const Home: React.FC = () => {
         });
 
         if (response.ok) {
-          const data = await response.json();
-          console.log('Respuesta del backend:', data);
-          toast.success('Reunión agendada con éxito')
+          const dataResponse = await response.json();
+          console.log('Respuesta del backend:', dataResponse);
+          toast.success('Reunión agendada con éxito');
         } else {
           const errorData = await response.json();
           console.error('Error del backend:', errorData);
-          toast.error('Error al enviar los datos al backend')
+          toast.error('Error al enviar los datos al backend');
         }
       } catch (error) {
         console.error('Error al realizar la solicitud:', error);
-        toast.error('Ocurrió un error al realizar la solicitud.')
+        toast.error('Ocurrió un error al realizar la solicitud.');
       }
     }
 
-    sendDataToBackend();
+    // Llamada a la función para enviar datos al backend
+    await sendDataToBackend();
+
+    const eventData = {
+      summary: data.titulo || 'Evento',
+      location: data.modalidad || '',
+      description: data.descripcion || '',
+      start: {
+        dateTime: data.fecha_inicio,
+        timeZone: timeZone,
+      },
+      end: {
+        dateTime: data.fecha_fin,
+        timeZone: timeZone,
+      },
+    };
+
+    // Enviar evento a Google Calendar
+    try {
+      const result = await addEvent(eventData);
+      console.log('Evento agregado a Google Calendar:', result);
+      toast.success('Evento agregado a Google Calendar');
+    } catch (error) {
+      console.error('Error al agregar evento a Google Calendar:', error);
+      toast.error('Error al agregar evento a Google Calendar');
+    }
   };
 
   const processAssistantMessage = (messageContent: string): ProcessedContent => {
     try {
-
       const jsonMatch = messageContent.match(/\{[\s\S]*?\}/);
       if (jsonMatch) {
         const jsonPart = jsonMatch[0];
@@ -92,6 +120,7 @@ const Home: React.FC = () => {
 
       if (processedContent.isComplete && processedContent.json && !dataSent && currentAction === 1) {
         const dataSend = {
+          titulo: processedContent.json.titulo, 
           descripcion: processedContent.json.descripcion,
           fecha_inicio: processedContent.json.fecha_inicio,
           fecha_fin: processedContent.json.fecha_fin,

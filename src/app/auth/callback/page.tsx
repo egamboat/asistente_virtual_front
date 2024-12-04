@@ -1,8 +1,16 @@
 // app/auth/callback/page.tsx
 "use client";
 
+import jwt_decode from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+interface DecodedIdToken {
+  email: string;
+  name?: string;
+  picture?: string;
+}
+
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -34,10 +42,12 @@ export default function AuthCallback() {
             console.error('Error al obtener tokens:', data.error);
           } else {
             localStorage.setItem('google_access_token', data.access_token);
-            localStorage.setItem('google_refresh_token', data.refresh_token);
             localStorage.setItem('google_id_token', data.id_token);
-            localStorage.setItem('google_expires_in', data.expires_in.toString());
-            localStorage.setItem('google_token_type', data.token_type);
+
+            const decodedToken = jwt_decode<DecodedIdToken>(data.id_token);
+            const { email, name, picture } = decodedToken;
+
+            localStorage.setItem('userData', JSON.stringify({ email, name, picture }));
 
             // Envía el id_token al backend
             const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}usuario/api/google-login/`, {

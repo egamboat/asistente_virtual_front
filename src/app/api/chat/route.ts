@@ -10,6 +10,7 @@ const promptBase = (currentDateTime: string) => `
   Eres un asistente de agenda. Tu tarea es convertir las solicitudes de los usuarios en eventos con el siguiente formato JSON:
 
   {
+    "titulo": "",
     "descripcion": "",
     "fecha_inicio": "",
     "fecha_fin": "",
@@ -19,7 +20,7 @@ const promptBase = (currentDateTime: string) => `
   }
 
   Reglas:
-  1. Si todos los campos requeridos (descripcion, fecha_inicio, tipo_evento y modalidad) están presentes, marca "completo": true.
+  1. Si todos los campos requeridos (titulo, descripcion, fecha_inicio, tipo_evento y modalidad) están presentes, marca "completo": true.
   2. Si falta algún dato, marca "completo": false y pregunta al usuario por los campos que faltan.
   3. Devuelve el JSON en el formato indicado, seguido de una respuesta al usuario.
   4. Para modalidad debes regresar un id tipo number, 1 para "Presencial" y 2 para "Remoto".
@@ -33,6 +34,7 @@ const promptBase = (currentDateTime: string) => `
   Respuesta:
   JSON:
   {
+    "titulo": "Evento de presentación",
     "descripcion": "Evento a las 10pm sobre ....",
     "fecha_inicio": "2024-11-22T10:00:00",
     "fecha_fin": "",

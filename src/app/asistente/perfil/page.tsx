@@ -112,9 +112,9 @@ const Perfil = () => {
     };
 
     const eventData = {
-        summary: 'Prueba desde Nomi App',
-        location: 'UNEMI',
-        description: 'Verificación de que funcione.',
+        summary: 'Titulo',
+        location: 'ubicacion',
+        description: 'Descripcion',
         start: {
             dateTime: '2024-12-04T09:00:00-07:00', // Fecha y hora de inicio
             timeZone: 'America/Guayaquil',
@@ -221,7 +221,7 @@ const Perfil = () => {
             <button onClick={() => modifyEvent(eventId, updatedEventData)}>Editar</button>
             <button onClick={() => removeEvent(eventId)}>Eliminar</button>
             {/* <div className="flex justify-center items-center mt-12">
-                <MicrofonoBoton />
+                <MicrofonoBoton />Ir al Calendario https://calendar.google.com/calendar/
             </div> */}
             {isModalOpen && (
                 <ModalAyuda

@@ -1,7 +1,5 @@
 // src/services/googleCalendarApi.ts
 
-import { toast } from 'react-toastify';
-
 export interface EventDataGoogle {
   summary?: string;
   description?: string;
@@ -28,14 +26,11 @@ export const getEvents = async (accessToken: string): Promise<any[]> => {
 
     const data = await response.json();
     if (response.ok) {
-      toast.success('Eventos cargados exitosamente');
       return data.items;
     } else {
-      toast.error(`Error al obtener eventos: ${data.error.message}`);
       return [];
     }
   } catch (error) {
-    toast.error('Error obteniendo eventos');
     console.error('Error obteniendo eventos:', error);
     return [];
   }
@@ -55,14 +50,12 @@ export const createEvent = async (accessToken: string, eventData: EventDataGoogl
 
     const data = await response.json();
     if (response.ok) {
-      toast.success('Evento creado exitosamente');
       return data;
     } else {
-      toast.error(`Error al crear evento: ${data.error.message}`);
+      console.error(`Error al crear evento: ${data.error.message}`);
       return null;
     }
   } catch (error) {
-    toast.error('Error al crear el evento');
     console.error('Error al crear el evento:', error);
     return null;
   }
@@ -82,14 +75,12 @@ export const updateEvent = async (accessToken: string, eventId: string, updatedE
 
     const data = await response.json();
     if (response.ok) {
-      toast.success('Evento actualizado exitosamente');
       return data;
     } else {
-      toast.error(`Error al actualizar evento: ${data.error.message}`);
+      // toast.error(`Error al actualizar evento: ${data.error.message}`);
       return null;
     }
   } catch (error) {
-    toast.error('Error al actualizar el evento');
     console.error('Error al actualizar el evento:', error);
     return null;
   }
@@ -106,15 +97,13 @@ export const deleteEvent = async (accessToken: string, eventId: string): Promise
     });
 
     if (response.ok) {
-      toast.success('Evento eliminado exitosamente');
       return true;
     } else {
       const data = await response.json();
-      toast.error(`Error al eliminar evento: ${data.error.message}`);
+      console.error(`Error al eliminar evento: ${data.error.message}`);
       return false;
     }
   } catch (error) {
-    toast.error('Error al eliminar el evento');
     console.error('Error al eliminar el evento:', error);
     return false;
   }

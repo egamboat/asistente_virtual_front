@@ -7,6 +7,7 @@ import { getEvents, createEvent, updateEvent, deleteEvent, EventDataGoogle } fro
 export const useGoogleCalendar = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [accessTokenGoogle, setAccessTokenGoogle] = useState<string | null>(null);
+  const timeZone = 'America/Guayaquil';
 
   useEffect(() => {
     const token = localStorage.getItem('google_access_token');
@@ -49,5 +50,6 @@ export const useGoogleCalendar = () => {
     addEvent,
     modifyEvent,
     removeEvent,
+    timeZone,
   };
 };
