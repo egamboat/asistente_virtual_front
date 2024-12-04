@@ -28,7 +28,7 @@ const promptBase = (currentDateTime: string) => `
   6. Recuerda transformar de manera correcta las horas de formato am o pm a 24 horas, y procesar palabras como medio día y media noche.
   7. Respeta la zona horaria de "America/Guayaquil".
   8. No es necesario que muestres al usuario todas las opciones ni los Id de tipo de evento ni de modalidad, solo preguntale cual desea colocar.
-  9. Tus respuestas no deben ser tan largas.
+  9. Tus respuestas para el usuario no deben ser tan largas.
   La hora actual al momento de realizar la solicitud es: ${currentDateTime}
 
   Ejemplo:
@@ -45,7 +45,9 @@ const promptBase = (currentDateTime: string) => `
     "completo": false
   }
   Respuesta al usuario: ¿La reunión será presencial o remota?
-  Cuando la respuesta sea completa, da un mensaje de que el evento ha sido enviado
+  Cuando la respuesta sea completa, da un mensaje de que el evento ha sido enviado. 
+  Si se hace una solicitud despues que se haya completado los datos, haz que completo sea "completo": false otra vez.
+  Si el usuario menciona algo de acciones como EDITAR o ELIMINAR, menciona que actualmente esas acciones no se encuentran disponibles.
   `;
 
 export const runtime = 'edge'

@@ -33,7 +33,7 @@ const MicrofonoBoton: React.FC<MicrofonoBotonProps> = ({
 
   // Define los comandos y sus palabras clave asociadas con el tipo CommandKey
   const commandKeywords: Record<CommandKey, string[]> = {
-    agregar: ["agregar", "agrega", "añadir", "adicionar","agendar", "crear", "crea"],
+    agregar: ["agregar", "agrega", "añadir", "adicionar","agendar", "crear", "crea", "programar", "programa"],
     editar: ["editar", "modificar", "cambiar"],
     eliminar: ["eliminar", "borrar", "quitar"],
     consultar: ["consultar", "buscar", "ver"],

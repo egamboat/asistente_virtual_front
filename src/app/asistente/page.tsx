@@ -34,6 +34,16 @@ const Home: React.FC = () => {
     }
   };
 
+  const speak = (text: string) => {
+    window.speechSynthesis.cancel(); // Detiene cualquier síntesis en curso
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-419';
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
+
   const handleDataSend = async (data: any) => {
     if (!data.fecha_fin || data.fecha_fin.trim() === '') {
       data.fecha_fin = data.fecha_inicio;
@@ -124,6 +134,14 @@ const Home: React.FC = () => {
       const processedContent = processAssistantMessage(lastAssistantMessage.content);
 
       setIsComplete(processedContent.isComplete);
+
+      if (processedContent.userMessage) {
+        const delay = 500;
+        setTimeout(() => {
+          speak(processedContent.userMessage);
+        }, delay);
+      }
+
 
       if (processedContent.isComplete && processedContent.json && !dataSent && currentAction === 1) {
         const dataSend = {
