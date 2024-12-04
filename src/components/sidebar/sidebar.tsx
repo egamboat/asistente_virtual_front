@@ -14,10 +14,10 @@ const Sidebar = () => {
   const [storedData, setStoredData] = useState<UserData | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    // if (!token) {
-    //   router.push("/"); // Usa router desde el hook
-    // }
+    const token = localStorage.getItem("backend_access_token");
+    if (!token) {
+      router.push("/"); // Usa router desde el hook
+    }
 
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -50,10 +50,20 @@ const Sidebar = () => {
     try {
       googleLogout();
       if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-        localStorage.removeItem('userData');
-        localStorage.removeItem('token');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+
+        const keysToRemove = [
+          'userData',
+          'token',
+          'access_token',
+          'refresh_token',
+          'google_id_token',
+          'google_access_token',
+          'backend_access_token',
+          'backend_refresh_token',
+          'ally-supports-cache'
+        ];
+
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
 
         setStoredData(null);
 
@@ -63,6 +73,7 @@ const Sidebar = () => {
       console.error('Error during logout:', error);
     }
   };
+
 
 
   const menuItems = [

@@ -19,11 +19,8 @@ const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [accessTokenGoogle, setAccessTokenGoogle] = useState<string | null>(null);
-    // const { events, loadEvents, addEvent, modifyEvent, removeEvent } = useGoogleCalendar();
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
-
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
 
     const handleOpenModal = () => {
@@ -34,11 +31,6 @@ const Perfil = () => {
             toast.error('No puedes abrir el modal en este momento.');
         }
     };
-
-    useEffect(() => {
-        const token = localStorage.getItem("google_access_token");
-        setAccessTokenGoogle(token);
-    }, []);
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
