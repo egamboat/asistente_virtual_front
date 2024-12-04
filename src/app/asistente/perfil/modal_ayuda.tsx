@@ -12,9 +12,10 @@ const ModalAyuda: React.FC<ModalAyudaProps> = ({ isOpen, onClose, onEnviar }) =>
 
     if (!isOpen) return null;
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setMensaje(e.target.value);
     };
+
 
     const handleEnviar = () => {
         if (mensaje.trim() === '') {
@@ -22,7 +23,7 @@ const ModalAyuda: React.FC<ModalAyudaProps> = ({ isOpen, onClose, onEnviar }) =>
             return;
         }
         onEnviar(mensaje);
-        setMensaje(''); 
+        setMensaje('');
     };
 
     return (
@@ -30,13 +31,15 @@ const ModalAyuda: React.FC<ModalAyudaProps> = ({ isOpen, onClose, onEnviar }) =>
             <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
                 <h2 className="text-xl font-bold mb-4">Solicitar Ayuda</h2>
                 <div className="mb-4">
-                    <p>Por favor ingresa los detalles de tu solicitud de ayuda:</p>
-                    <input
-                        type="text"
+                    <div className='mt-2'>
+                        <i className="ri-alarm-warning-line"></i>
+                        <p>Por favor ingresa los detalles de tu solicitud de ayuda, pronto el administrador se contactará contigo.</p>
+                    </div>
+                    <textarea
                         value={mensaje}
                         onChange={handleInputChange}
                         placeholder="Escribe tu solicitud aquí..."
-                        className="w-full border border-gray-300 rounded-lg p-2 mt-2"
+                        className="w-full border border-gray-300 rounded-lg p-2 mt-2 resize-none h-32"
                     />
                 </div>
                 <div className="flex justify-end">

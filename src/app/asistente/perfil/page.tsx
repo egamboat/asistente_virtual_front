@@ -12,6 +12,7 @@ import { Building, Mail } from "lucide-react";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import ModalConfirmacion from "@/components/modals/confirmar";
+import Image from "next/image";
 import { useGoogleCalendar } from "@/hooks/useGoogleCalendar";
 
 const Perfil = () => {
@@ -19,6 +20,17 @@ const Perfil = () => {
     const [storedData, setStoredData] = useState<UserData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [accessToken, setAccessToken] = useState<string>("");
+    const [imageSrc, setImageSrc] = useState(storedData?.picture || '/images/user_foto.jpg');
+
+    const handleImageError = () => {
+        setImageSrc('/images/user_foto.jpg'); // Imagen por defecto
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem("access_token") || "";
+        setAccessToken(token);
+    }, []); // Solo se ejecuta en el cliente
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
     const closeDeleteModal = () => setIsDeleteModalOpen(false);
@@ -36,11 +48,36 @@ const Perfil = () => {
         setIsModalOpen(false);
     };
 
-    const handleEnviarAyuda = () => {
-        // Aquí puedes agregar la lógica que se ejecutará al presionar "Enviar"
-        toast.success('¡Solicitud de ayuda enviada con éxito!');
-        setIsModalOpen(false);
+    const handleEnviarAyuda = async (mensaje: string) => {
+        console.log("Mensaje recibido:", mensaje);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}usuario/solicitudes/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    correo: storedData?.email,
+                    texto: mensaje
+                })
+            });
+
+            if (response.ok) {
+                toast.success('¡Solicitud de ayuda enviada con éxito!');
+                setIsModalOpen(false);
+            } else {
+                const errorData = await response.json();
+                console.error('Error en la respuesta del servidor:', errorData);
+                toast.error(`Hubo un error al enviar la solicitud: ${errorData.message || 'Intenta nuevamente.'}`);
+            }
+        } catch (error) {
+            console.error('Error al enviar solicitud:', error);
+            toast.error('No se pudo conectar al servidor. Verifica tu conexión.');
+        }
     };
+
+
 
     useEffect(() => {
         if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
@@ -54,7 +91,6 @@ const Perfil = () => {
 
     const handleDeleteAccount = async () => {
         try {
-            const accessToken = localStorage.getItem("access_token");
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BASE_URL}usuario/api/delete-account/`,
                 {
@@ -159,10 +195,14 @@ const Perfil = () => {
 
                             {/* Foto de perfil */}
                             <div className="flex justify-center md:justify-end">
-                                <img
-                                    src={storedData?.picture}
+                                <Image
+                                    src={imageSrc}
                                     alt="Foto de perfil"
                                     className="w-16 h-16 rounded-full border border-gray-300"
+                                    width={16}
+                                    height={16}
+                                    unoptimized={!!storedData?.picture && !storedData?.picture.startsWith('/')}
+                                    onError={handleImageError}
                                 />
                             </div>
                         </div>
@@ -172,18 +212,11 @@ const Perfil = () => {
                     <h3 className="text-lg font-bold my-4">Cuenta:</h3>
                     <div className="flex justify-between space-x-2">
                         <button className="bg-white py-2 px-4 rounded-lg" onClick={openDeleteModal} >Borrar Cuenta</button>
-                        {/* <button className="bg-white py-2 px-4 rounded">Restablecer Contraseña</button> */}
                         <button onClick={handleOpenModal} className="bg-white py-2 px-4 rounded-lg">Solicitar Ayuda</button>
                     </div>
                 </div>
             </div>
-            {/* <button onClick={loadEvents}> Cargar Eventos </button>
-            <button onClick={() => addEvent(eventData)}> Crear Eventos </button>
-            <button onClick={() => modifyEvent(eventId, updatedEventData)}>Editar</button>
-            <button onClick={() => removeEvent(eventId)}>Eliminar</button> */}
-            {/* <div className="flex justify-center items-center mt-12">
-                <MicrofonoBoton />Ir al Calendario https://calendar.google.com/calendar/
-            </div> */}
+
             {isModalOpen && (
                 <ModalAyuda
                     isOpen={isModalOpen}
