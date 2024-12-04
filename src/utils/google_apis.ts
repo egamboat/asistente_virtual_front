@@ -15,7 +15,7 @@ export interface EventDataGoogle {
 }
 
 // Función para obtener eventos
-export const getEvents = async (accessToken: string): Promise<any[]> => {
+export const getEvents = async (accessToken: string): Promise<any|null> => {
   try {
     const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
       method: 'GET',
@@ -26,13 +26,14 @@ export const getEvents = async (accessToken: string): Promise<any[]> => {
 
     const data = await response.json();
     if (response.ok) {
-      return data.items;
+      return data;
     } else {
-      return [];
+      console.error(`Error al crear evento: ${data.error.message}`);
+      return null;
     }
   } catch (error) {
-    console.error('Error obteniendo eventos:', error);
-    return [];
+    console.error('Error al crear el evento:', error);
+    return null;
   }
 };
 
@@ -50,7 +51,7 @@ export const createEvent = async (accessToken: string, eventData: EventDataGoogl
 
     const data = await response.json();
     if (response.ok) {
-      return data;
+      return data; // Retorna el evento creado
     } else {
       console.error(`Error al crear evento: ${data.error.message}`);
       return null;
@@ -60,6 +61,7 @@ export const createEvent = async (accessToken: string, eventData: EventDataGoogl
     return null;
   }
 };
+
 
 // Función para actualizar un evento
 export const updateEvent = async (accessToken: string, eventId: string, updatedEventData: EventDataGoogle): Promise<any | null> => {

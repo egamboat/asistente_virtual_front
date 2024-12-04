@@ -70,28 +70,48 @@ export const cargarEventos = async () => {
 // Función para crear evento
 export const crearEvento = async (dataSend: any) => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
-  
-      const response = await customFetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataSend),
-      });
-  
-      if (response.ok) {
-        const newEvent = await response.json();
-        toast.success('Evento creado con éxito');
-        return newEvent;
-      } else {
-        const errorData = await response.json();
-        toast.error(`Error al crear el evento: ${errorData.detail || "Error desconocido"}`);
-        throw new Error(errorData.detail || "Error desconocido");
-      }
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/`;
+
+        const response = await customFetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataSend),
+        });
+
+        if (response.ok) {
+            const newEvent = await response.json();
+            toast.success('Evento creado con éxito');
+            return newEvent;
+        } else {
+            const errorData = await response.json();
+            toast.error(`Error al crear el evento: ${errorData.detail || "Error desconocido"}`);
+            throw new Error(errorData.detail || "Error desconocido");
+        }
     } catch (error) {
-      console.error("Error al crear el evento:", error);
-      toast.error("Error al crear el evento. Por favor, inténtalo de nuevo.");
-      throw error;
+        console.error("Error al crear el evento:", error);
+        toast.error("Error al crear el evento. Por favor, inténtalo de nuevo.");
+        throw error;
     }
-  };
+};
+
+export async function updateEventWithGoogleId(eventIdLocal: number, googleEventId: string) {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}asistente/api/eventos/${eventIdLocal}/`;
+
+    try {
+        const response = await customFetch(url, {
+            method: 'PATCH',
+            body: JSON.stringify({ google_event_id: googleEventId }),
+        });
+
+        if (response.ok) {
+            console.log('Evento actualizado con google_event_id');
+        } else {
+            console.error('Error al actualizar el evento con google_event_id');
+        }
+    } catch (error) {
+        console.error('Error al realizar la solicitud:', error);
+    }
+}
+

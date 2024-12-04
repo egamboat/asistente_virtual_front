@@ -20,7 +20,7 @@ const Perfil = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [accessTokenGoogle, setAccessTokenGoogle] = useState<string | null>(null);
-    const { events, loadEvents, addEvent, modifyEvent, removeEvent } = useGoogleCalendar();
+    // const { events, loadEvents, addEvent, modifyEvent, removeEvent } = useGoogleCalendar();
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
 
@@ -111,37 +111,6 @@ const Perfil = () => {
         }
     };
 
-    const eventData = {
-        summary: 'Titulo',
-        location: 'ubicacion',
-        description: 'Descripcion',
-        start: {
-            dateTime: '2024-12-04T09:00:00-07:00', // Fecha y hora de inicio
-            timeZone: 'America/Guayaquil',
-        },
-        end: {
-            dateTime: '2024-12-04T10:00:00-07:00', // Fecha y hora de fin
-            timeZone: 'America/Guayaquil',
-        },
-    };
-
-    const eventId = "h2prgo8o4rm8iknr8lueqhiahk"; // Reemplaza con el ID real del evento
-    const updatedEventData = {
-        summary: 'Prueba de actualizacion',
-        description: 'Actualizacion del evento para el 4',
-        start: {
-            dateTime: '2024-12-04T09:00:00-05:00', // Fecha y hora de inicio en formato ISO 8601
-            timeZone: 'America/Guayaquil', // Ajusta la zona horaria según corresponda
-        },
-        end: {
-            dateTime: '2024-12-04T10:00:00-05:00', // Fecha y hora de fin
-            timeZone: 'America/Guayaquil',
-        },
-        // Puedes agregar más campos a actualizar
-    };
-
-    console.log("Eventos de google:", events)
-    // handleDeleteEvent(eventIddlt);
     return (
         <div className="bg-white flex flex-col justify-between">
             <div className="flex justify-between w-full mt-4">
@@ -216,10 +185,10 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-            <button onClick={loadEvents}> Cargar Eventos </button>
+            {/* <button onClick={loadEvents}> Cargar Eventos </button>
             <button onClick={() => addEvent(eventData)}> Crear Eventos </button>
             <button onClick={() => modifyEvent(eventId, updatedEventData)}>Editar</button>
-            <button onClick={() => removeEvent(eventId)}>Eliminar</button>
+            <button onClick={() => removeEvent(eventId)}>Eliminar</button> */}
             {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />Ir al Calendario https://calendar.google.com/calendar/
             </div> */}

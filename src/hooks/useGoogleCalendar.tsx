@@ -26,7 +26,10 @@ export const useGoogleCalendar = () => {
     if (newEvent) {
       setEvents([...events, newEvent]);
     }
+    return newEvent; // Retorna el evento creado
   };
+  
+  
 
   const modifyEvent = async (eventId: string, updatedEventData: EventDataGoogle) => {
     if (!accessTokenGoogle) return;

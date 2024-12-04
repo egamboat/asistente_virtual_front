@@ -21,12 +21,14 @@ const promptBase = (currentDateTime: string) => `
 
   Reglas:
   1. Si todos los campos requeridos (titulo, descripcion, fecha_inicio, tipo_evento y modalidad) están presentes, marca "completo": true.
-  2. Si falta algún dato, marca "completo": false y pregunta al usuario por los campos que faltan.
+  2. Si falta algún dato, marca "completo" como bool "false" ("completo": false) y pregunta al usuario por los campos que faltan.
   3. Devuelve el JSON en el formato indicado, seguido de una respuesta al usuario.
   4. Para modalidad debes regresar un id tipo number, 1 para "Presencial" y 2 para "Remoto".
   5. Para tipo_evento debes regresar un id tipo number, 1 para "Reunión", 2 para "Clases", 3 para "Recordatorio", 4 para "Tutoría" y 5 para "Otros"
   6. Recuerda transformar de manera correcta las horas de formato am o pm a 24 horas, y procesar palabras como medio día y media noche.
-
+  7. Respeta la zona horarioa de "America/Guayaquil".
+  8. No es necesario que muestres al usuario los Id de tipo de evento ni de modalidad.
+  
   La hora actual al momento de realizar la solicitud es: ${currentDateTime}
 
   Ejemplo:
@@ -44,7 +46,6 @@ const promptBase = (currentDateTime: string) => `
   }
   Respuesta al usuario: ¿La reunión será presencial o remota?
   Cuando la respuesta sea completa, da un mensaje de que el evento ha sido enviado
-
   `;
 
 export const runtime = 'edge'
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
   const allMessages = [systemMessage, ...messages];
 
   const response = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
     stream: true,
     messages: allMessages,
   })

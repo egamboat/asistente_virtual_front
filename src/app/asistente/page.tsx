@@ -9,6 +9,7 @@ import { customFetch } from '@/components/refresh_token';
 import { toast } from 'react-toastify';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { formatInTimeZone } from 'date-fns-tz'
+import { updateEventWithGoogleId } from '@/utils/funciones';
 
 interface ProcessedContent {
   userMessage: string;
@@ -22,6 +23,7 @@ const Home: React.FC = () => {
   const [dataSent, setDataSent] = useState(false);
   const [currentAction, setCurrentAction] = useState<number | null>(null);
   const { addEvent, timeZone } = useGoogleCalendar();
+  const [idEventoAgregado, setIdEventoAgregado] = useState<number>(0)
 
   const handleTranscriptionComplete = async (transcribedText: string) => {
     if (transcribedText && transcribedText.trim() !== '') {
@@ -49,7 +51,7 @@ const Home: React.FC = () => {
 
         if (response.ok) {
           const dataResponse = await response.json();
-          console.log('Respuesta del backend:', dataResponse);
+          setIdEventoAgregado(dataResponse.id)
           toast.success('Reunión agendada con éxito');
         } else {
           const errorData = await response.json();
@@ -84,6 +86,11 @@ const Home: React.FC = () => {
       const result = await addEvent(eventData);
       console.log('Evento agregado a Google Calendar:', result);
       toast.success('Evento agregado a Google Calendar');
+
+      const googleEventId = result.id;
+      data.google_event_id = googleEventId;
+
+      await updateEventWithGoogleId(idEventoAgregado, googleEventId);
     } catch (error) {
       console.error('Error al agregar evento a Google Calendar:', error);
       toast.error('Error al agregar evento a Google Calendar');
@@ -120,7 +127,7 @@ const Home: React.FC = () => {
 
       if (processedContent.isComplete && processedContent.json && !dataSent && currentAction === 1) {
         const dataSend = {
-          titulo: processedContent.json.titulo, 
+          titulo: processedContent.json.titulo,
           descripcion: processedContent.json.descripcion,
           fecha_inicio: processedContent.json.fecha_inicio,
           fecha_fin: processedContent.json.fecha_fin,
