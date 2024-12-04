@@ -12,6 +12,7 @@ import { Building, Mail } from "lucide-react";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import ModalConfirmacion from "@/components/modals/confirmar";
+import { useGoogleCalendar } from "@/hooks/useGoogleCalendar";
 
 const Perfil = () => {
     const router = useRouter();
@@ -19,6 +20,7 @@ const Perfil = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [accessTokenGoogle, setAccessTokenGoogle] = useState<string | null>(null);
+    const { events, loadEvents, addEvent, modifyEvent, removeEvent } = useGoogleCalendar();
 
     const openDeleteModal = () => setIsDeleteModalOpen(true);
 
@@ -109,112 +111,36 @@ const Perfil = () => {
         }
     };
 
-    const handleGetEvents = async () => {
-        if (!accessTokenGoogle) return;
-
-        try {
-            const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${accessTokenGoogle}`,
-                },
-            });
-
-            const data = await response.json();
-            console.log('Eventos:', data.items);
-        } catch (error) {
-            console.error('Error obteniendo eventos:', error);
-        }
+    const eventData = {
+        summary: 'Prueba desde Nomi App',
+        location: 'UNEMI',
+        description: 'Verificación de que funcione.',
+        start: {
+            dateTime: '2024-12-04T09:00:00-07:00', // Fecha y hora de inicio
+            timeZone: 'America/Guayaquil',
+        },
+        end: {
+            dateTime: '2024-12-04T10:00:00-07:00', // Fecha y hora de fin
+            timeZone: 'America/Guayaquil',
+        },
     };
 
-    const handleCreateEvent = async () => {
-        if (!accessTokenGoogle) return;
-
-        const eventData = {
-            summary: 'Reunión de equipo',
-            location: 'Oficina',
-            description: 'Reunión mensual de planificación',
-            start: {
-                dateTime: '2024-12-03T09:00:00-07:00', // Fecha y hora de inicio
-                timeZone: 'America/Los_Angeles',
-            },
-            end: {
-                dateTime: '2024-12-04T10:00:00-07:00', // Fecha y hora de fin
-                timeZone: 'America/Los_Angeles',
-            },
-        };
-
-        try {
-            const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessTokenGoogle}`,
-                },
-                body: JSON.stringify(eventData),
-            });
-
-            const data = await response.json();
-            console.log('Evento creado:', data);
-        } catch (error) {
-            console.error('Error creando evento:', error);
-        }
-    };
-
-    const handleUpdateEvent = async (eventId: any, updatedEventData: any) => {
-        if (!accessTokenGoogle) return;
-
-        try {
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-                method: 'PATCH', // También puedes usar 'PATCH' para actualizaciones parciales
-                headers: {
-                    'Authorization': `Bearer ${accessTokenGoogle}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedEventData),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                console.log('Evento actualizado:', data);
-                toast.success("Actualizado")
-            } else {
-                console.error('Error al actualizar el evento:', data);
-            }
-        } catch (error) {
-            console.error('Error al actualizar el evento:', error);
-        }
-    };
-    const eventId = "879argep71m1kli77r5mj0ot54"; // Reemplaza con el ID real del evento
+    const eventId = "h2prgo8o4rm8iknr8lueqhiahk"; // Reemplaza con el ID real del evento
     const updatedEventData = {
         summary: 'Prueba de actualizacion',
-        description: 'Actualizacion del evento para el 3',
+        description: 'Actualizacion del evento para el 4',
+        start: {
+            dateTime: '2024-12-04T09:00:00-05:00', // Fecha y hora de inicio en formato ISO 8601
+            timeZone: 'America/Guayaquil', // Ajusta la zona horaria según corresponda
+        },
+        end: {
+            dateTime: '2024-12-04T10:00:00-05:00', // Fecha y hora de fin
+            timeZone: 'America/Guayaquil',
+        },
         // Puedes agregar más campos a actualizar
     };
 
-
-    const handleDeleteEvent = async (eventId:any) => {
-        if (!accessTokenGoogle) return;
-
-        try {
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${accessTokenGoogle}`,
-                },
-            });
-
-            if (response.ok) {
-                console.log('Evento eliminado exitosamente');
-            } else {
-                const errorData = await response.json();
-                console.error('Error al eliminar el evento:', errorData);
-            }
-        } catch (error) {
-            console.error('Error al eliminar el evento:', error);
-        }
-    };
-    
+    console.log("Eventos de google:", events)
     // handleDeleteEvent(eventIddlt);
     return (
         <div className="bg-white flex flex-col justify-between">
@@ -290,10 +216,10 @@ const Perfil = () => {
                     </div>
                 </div>
             </div>
-            <button onClick={handleGetEvents}> Cargar Eventos </button>
-            <button onClick={handleCreateEvent}> Crear Eventos </button>
-            <button onClick={() => handleUpdateEvent(eventId, updatedEventData)}>Editar</button>
-            <button onClick={() => handleDeleteEvent(eventId)}>Eliminar</button>
+            <button onClick={loadEvents}> Cargar Eventos </button>
+            <button onClick={() => addEvent(eventData)}> Crear Eventos </button>
+            <button onClick={() => modifyEvent(eventId, updatedEventData)}>Editar</button>
+            <button onClick={() => removeEvent(eventId)}>Eliminar</button>
             {/* <div className="flex justify-center items-center mt-12">
                 <MicrofonoBoton />
             </div> */}
