@@ -86,10 +86,11 @@ import { useEffect, useState } from "react";
 
 export default function Login() {
   const [email, setEmail] = useState<string | null>(null);
+  const baseUrl = process.env.REDIRECT_URI; // Obtiene la variable de entorno
 
   // const CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
   const CLIENT_ID = "523092773771-idoq5bggshdhd6n4njd9maqacitcpkll.apps.googleusercontent.com"
-  const REDIRECT_URI = 'http://localhost:3000/auth/callback'; // Ajusta si es necesario
+  const REDIRECT_URI = `${baseUrl}auth/callback/`; // Ajusta si es necesario
 
   function loginWithGoogle() {
     const scope = encodeURIComponent('https://www.googleapis.com/auth/calendar');
