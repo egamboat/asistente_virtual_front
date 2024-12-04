@@ -143,12 +143,9 @@ export default function Home() {
               ¡Diseñado para docentes!
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <button onClick={handleLoginClick}>
+              <div className="font-bold text-[#181876]" onClick={handleLoginClick}>
                 <Login />
-              </button>
-              {/* <button className="border border-[#dee0e3] text-[#54575a] px-8 py-2 rounded-sm hover:bg-gray-50 text-[.85rem] font-normal">
-                Ver Tutorial
-              </button> */}
+              </div>
             </div>
           </div>
         </div>

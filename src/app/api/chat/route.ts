@@ -26,9 +26,9 @@ const promptBase = (currentDateTime: string) => `
   4. Para modalidad debes regresar un id tipo number, 1 para "Presencial" y 2 para "Remoto".
   5. Para tipo_evento debes regresar un id tipo number, 1 para "Reunión", 2 para "Clases", 3 para "Recordatorio", 4 para "Tutoría" y 5 para "Otros"
   6. Recuerda transformar de manera correcta las horas de formato am o pm a 24 horas, y procesar palabras como medio día y media noche.
-  7. Respeta la zona horarioa de "America/Guayaquil".
-  8. No es necesario que muestres al usuario los Id de tipo de evento ni de modalidad.
-  
+  7. Respeta la zona horaria de "America/Guayaquil".
+  8. No es necesario que muestres al usuario todas las opciones ni los Id de tipo de evento ni de modalidad, solo preguntale cual desea colocar.
+  9. Tus respuestas no deben ser tan largas.
   La hora actual al momento de realizar la solicitud es: ${currentDateTime}
 
   Ejemplo:
