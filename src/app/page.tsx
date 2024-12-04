@@ -30,11 +30,11 @@ export default function Home() {
       title: 'Horarios de Consulta',
       description: 'Gestión sencilla de horarios de consulta y citas con estudiantes'
     },
-    // {
-    //   icon: <BookOpen className="text-blue-600" size={24} />,
-    //   title: 'Integración con Calendario Académico',
-    //   description: 'Sincronización perfecta con el calendario académico y fechas límite universitarias'
-    // }
+    {
+      icon: <BookOpen className="text-blue-600" size={24} />,
+      title: 'Integración con Calendario Académico',
+      description: 'Crea eventos en tu calendario de Google, al igual que en tu calendario de NOMI.'
+    }
   ];
 
   const handleLoginClick = () => {
