@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { customFetch } from "@/components/refresh_token";
 import { toast } from "react-toastify";
 import ModalAyuda from "./modal_ayuda";
-import { eliminarEvento, editarEvento } from "@/utils/funciones";
 import { Building, Mail } from "lucide-react";
 import { googleLogout } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
